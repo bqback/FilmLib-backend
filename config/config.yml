@@ -1,0 +1,22 @@
+# config.yml
+
+api:
+  base_url: "/api/v"
+  version: 1
+
+server:
+  port: 8080
+
+db:
+  port: 5432
+
+logging:
+  # Accepted levels: trace, debug, info, warning, error
+  level: debug
+  disable_timestamp: false
+  full_timestamp: true
+  # If true, report_caller setting will be based on level being trace
+  # If false, report_caller setting will use the config value
+  level_based_report: true
+  report_caller: true
+  disable_level_truncation: true
