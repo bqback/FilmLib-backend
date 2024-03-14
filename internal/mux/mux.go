@@ -4,9 +4,11 @@ import (
 	"net/http"
 
 	"filmlib/internal/config"
+	"filmlib/internal/handlers"
+	"filmlib/internal/logging"
 )
 
-func SetupMux(handlers *handlers.Handlers, config *config.Config) *http.ServeMux {
+func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *logging.LogrusLogger) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	baseUrl := config.API.BaseUrl
@@ -15,20 +17,23 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config) *http.ServeMux
 	actorsSpecificUrl := actorsBaseUrl + "{id}/"
 
 	moviesBaseUrl := baseUrl + "movies/"
+	movieSortParams := moviesBaseUrl + "{type}/{order}/"
 	moviesSpecificUrl := moviesBaseUrl + "{id}/"
 	moviesSearchUrl := moviesBaseUrl + "search/"
 
-	mux.HandleFunc("POST "+actorsBaseUrl, handlers.CreateActor)
-	mux.HandleFunc("GET "+actorsSpecificUrl, handlers.ReadActor)
-	mux.HandleFunc("PATCH "+actorsSpecificUrl, handlers.UpdateActor)
-	mux.HandleFunc("DELETE "+actorsSpecificUrl, handlers.DeleteActor)
+	mux.HandleFunc("POST "+actorsBaseUrl, handlers.ActorHandler.CreateActor)
+	mux.HandleFunc("GET "+actorsBaseUrl, handlers.ActorHandler.GetActors)
+	mux.HandleFunc("GET "+actorsSpecificUrl, handlers.ActorHandler.ReadActor)
+	mux.HandleFunc("PATCH "+actorsSpecificUrl, handlers.ActorHandler.UpdateActor)
+	mux.HandleFunc("DELETE "+actorsSpecificUrl, handlers.ActorHandler.DeleteActor)
 
-	mux.HandleFunc("GET "+moviesBaseUrl, handlers.GetTopMovies)
-	mux.HandleFunc("POST "+moviesBaseUrl, handlers.CreateMovie)
-	mux.HandleFunc("GET "+moviesSpecificUrl, handlers.ReadMovie)
-	mux.HandleFunc("PATCH "+moviesSpecificUrl, handlers.UpdateMovie)
-	mux.HandleFunc("DELETE "+moviesSpecificUrl, handlers.DeleteMovie)
-	mux.HandleFunc("GET "+moviesSearchUrl, handlers.SearchMovies)
+	mux.HandleFunc("GET "+movieSortParams, handlers.MovieHandler.GetMovies)
+	mux.HandleFunc("POST "+moviesBaseUrl, handlers.MovieHandler.CreateMovie)
+	mux.HandleFunc("GET "+moviesSpecificUrl, handlers.MovieHandler.ReadMovie)
+	mux.HandleFunc("PATCH "+moviesSpecificUrl, handlers.MovieHandler.UpdateMovie)
+	mux.HandleFunc("DELETE "+moviesSpecificUrl, handlers.MovieHandler.DeleteMovie)
+
+	mux.HandleFunc("POST "+moviesSearchUrl, handlers.SearchHandler.Search)
 
 	return mux
 }

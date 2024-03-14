@@ -1,9 +1,11 @@
 package config
 
 import (
+	"filmlib/internal/apperrors"
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gopkg.in/yaml.v3"
 )
 
@@ -25,13 +27,25 @@ type LoggingConfig struct {
 	ReportCaller           bool   `yaml:"report_caller"`
 }
 
-type Config struct {
-	API     *APIConfig     `yaml:"api"`
-	Logging *LoggingConfig `yaml:"logging"`
-	Server  *ServerConfig  `yaml:"server"`
+type DatabaseConfig struct {
+	User              string `yaml:"user"`
+	Password          string `yaml:"-"`
+	Host              string `yaml:"-"`
+	Port              uint64 `yaml:"port"`
+	DBName            string `yaml:"db_name"`
+	AppName           string `yaml:"app_name"`
+	Schema            string `yaml:"schema"`
+	ConnectionTimeout uint64 `yaml:"connection_timeout"`
 }
 
-func LoadConfig(configPath string) (*Config, error) {
+type Config struct {
+	API      *APIConfig      `yaml:"api"`
+	Logging  *LoggingConfig  `yaml:"logging"`
+	Server   *ServerConfig   `yaml:"server"`
+	Database *DatabaseConfig `yaml:"config"`
+}
+
+func LoadConfig(envPath string, configPath string) (*Config, error) {
 	var (
 		config Config
 		err    error
@@ -48,7 +62,43 @@ func LoadConfig(configPath string) (*Config, error) {
 		return nil, err
 	}
 
+	if envPath == "" {
+		err = godotenv.Load()
+	} else {
+		err = godotenv.Load(envPath)
+	}
+
+	if err != nil {
+		return nil, apperrors.ErrEnvNotFound
+	}
+
+	config.Database.Password, err = GetDBPassword()
+	if err != nil {
+		return nil, err
+	}
+	config.Database.Host = GetDBConnectionHost()
+
 	config.API.BaseUrl = config.API.BaseUrl + fmt.Sprint(config.API.APIVersion) + "/"
 
 	return &config, nil
+}
+
+// GetDBConnectionHost
+// возвращает имя хоста из env для соединения с БД (по умолчанию localhost)
+func GetDBConnectionHost() string {
+	host, hOk := os.LookupEnv("POSTGRES_HOST")
+	if !hOk {
+		return "localhost"
+	}
+	return host
+}
+
+// getDBConnectionHost
+// возвращает пароль из env для соединения с БД
+func GetDBPassword() (string, error) {
+	pwd, pOk := os.LookupEnv("POSTGRES_PASSWORD")
+	if !pOk {
+		return "", apperrors.ErrDatabasePWMissing
+	}
+	return pwd, nil
 }

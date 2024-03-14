@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"net/http"
-	"proxy_server/internal/config"
-	"proxy_server/internal/service"
+	"filmlib/internal/config"
+	"filmlib/internal/service"
 )
 
 type Handlers struct {
 	ActorHandler
 	MovieHandler
+	SearchHandler
 }
 
 const nodeName = "handler"
@@ -17,45 +17,33 @@ const nodeName = "handler"
 // возвращает HandlerManager со всеми хэндлерами приложения
 func NewHandlers(services *service.Services, config *config.Config) *Handlers {
 	return &Handlers{
-		ActorHandler: *NewActorHandler(services.Request),
-		MovieHandler: *NewMovieHandler(services.Repeat, config),
+		ActorHandler:  *NewActorHandler(services.Actor),
+		MovieHandler:  *NewMovieHandler(services.Movie),
+		SearchHandler: *NewSearchHandler(services.Actor, services.Movie),
 	}
 }
 
 // NewMovieHandler
 // возвращает MovieHandler с необходимыми сервисами
-func NewMovieHandler(reqs service.IRequestService) *MovieHandler {
+func NewMovieHandler(ms service.IMovieService) *MovieHandler {
 	return &MovieHandler{
-		rs: reqs,
+		ms: ms,
 	}
 }
 
 // NewActorHandler
 // возвращает ActorHandler с необходимыми сервисами
-func NewActorHandler(reps service.IRepeatService, config *config.Config) *ActorHandler {
-	client := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(config.Proxy.URL),
-		},
-	}
+func NewActorHandler(as service.IActorService) *ActorHandler {
 	return &ActorHandler{
-		rs:     reps,
-		client: client,
+		as: as,
 	}
 }
 
 // NewScanHandler
 // возвращает ScanHandler с необходимыми сервисами
-func NewScanHandler(scans service.IScanService, config *config.Config) *ScanHandler {
-	client := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(config.Proxy.URL),
-		},
-	}
-	dictLocation := config.FileAttack.DictFile
-	return &ScanHandler{
-		ss:           scans,
-		client:       client,
-		dictLocation: dictLocation,
+func NewSearchHandler(as service.IActorService, ms service.IMovieService) *SearchHandler {
+	return &SearchHandler{
+		as: as,
+		ms: ms,
 	}
 }

@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"filmlib/internal/config"
+	"filmlib/internal/handlers"
 	"filmlib/internal/logging"
 	"filmlib/internal/mux"
+	"filmlib/internal/service"
+	"filmlib/internal/storage"
+	"filmlib/internal/storage/postgresql"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,7 +20,7 @@ const configPath string = "config/config.yml"
 const envPath string = "config/.env"
 
 func main() {
-	config, err := config.LoadConfig(configPath)
+	config, err := config.LoadConfig(envPath, configPath)
 	// govalidator.SetFieldsRequiredByDefault(true)
 	if err != nil {
 		log.Fatal(err.Error())
@@ -45,10 +49,7 @@ func main() {
 	handlers := handlers.NewHandlers(services, config)
 	logger.Info("Handlers configured")
 
-	mux, err := mux.SetupMux(*handlers, *config, &logger)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
+	mux := mux.SetupMux(handlers, config, &logger)
 	logger.Info("Router configured")
 
 	var server = http.Server{
