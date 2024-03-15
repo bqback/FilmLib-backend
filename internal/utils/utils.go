@@ -5,6 +5,7 @@ import (
 	"filmlib/internal/apperrors"
 	"filmlib/internal/logging"
 	"filmlib/internal/pkg/dto"
+	"log"
 )
 
 func GetReqLogger(ctx context.Context) (logging.ILogger, error) {
@@ -25,4 +26,18 @@ func GetReqID(ctx context.Context) (string, error) {
 		return reqID, nil
 	}
 	return "", apperrors.ErrRequestIDMissingFromContext
+}
+
+func GetLoggerAndID(ctx context.Context) (logging.ILogger, string, error) {
+	logger, err := GetReqLogger(ctx)
+	if err != nil {
+		log.Println(apperrors.ErrLoggerMissingFromContext)
+		return nil, "", err
+	}
+	requestID, err := GetReqID(ctx)
+	if err != nil {
+		logger.Error(err.Error())
+		return nil, "", err
+	}
+	return logger, requestID, nil
 }
