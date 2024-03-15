@@ -33,18 +33,9 @@ COPY --from=build-stage ./go/bin/tern ./tern
 COPY --from=build-stage ./app/filmlib-backend ./filmlib-backend
 COPY --from=build-stage ./app/config/.env ./config/.env
 COPY --from=build-stage ./app/config/config.yml ./config/config.yml
-# COPY --from=build-stage ./app/proxy-serv-ca.crt ./app/proxy-serv-ca.key /home/nonroot/.tls/
-
-# RUN cd /home/nonroot/.tls && \
-#         cp proxy-serv-ca.crt /usr/local/share/ca-certificates/proxy-serv-ca.crt && update-ca-certificates && \
-#         mkdir certs && mkdir keys
-
-# RUN cd /home/nonroot/ && \
-#         mkdir file_attack
 
 RUN chown -R nonroot /home/nonroot
 
 EXPOSE 8080
-EXPOSE 5432
 
 USER nonroot:nonroot

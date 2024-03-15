@@ -9,7 +9,6 @@ services:
     container_name: filmlib-backend
     ports: 
       - 8080:8080
-      - 8012:8012
     tty: true
     depends_on:
       db:
