@@ -21,7 +21,7 @@ const envPath string = "config/.env"
 
 func main() {
 	config, err := config.LoadConfig(envPath, configPath)
-	// govalidator.SetFieldsRequiredByDefault(true)
+
 	if err != nil {
 		log.Fatal(err.Error())
 	}

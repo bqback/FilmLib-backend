@@ -3,6 +3,8 @@ package handlers
 import (
 	"filmlib/internal/config"
 	"filmlib/internal/service"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type Handlers struct {
@@ -11,7 +13,9 @@ type Handlers struct {
 	SearchHandler
 }
 
-// const nodeName = "handler"
+var validate = validator.New(validator.WithRequiredStructEnabled())
+
+const nodeName = "handler"
 
 // NewHandlers
 // возвращает HandlerManager со всеми хэндлерами приложения
