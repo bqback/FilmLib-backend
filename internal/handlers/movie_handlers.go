@@ -18,7 +18,7 @@ type MovieHandler struct {
 //
 // @Param movieData body dto.NewMovie true "Данные о новом фильме"
 //
-// @Success 200  {object}  doc_structs.MovieResponse "Объект нового фильма"
+// @Success 200  {object}  entities.Movie "Объект нового фильма"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
@@ -34,9 +34,9 @@ func (mh MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param movieID path dto.MovieID true "ID фильма"
+// @Param movieID path uint true "ID фильма"
 //
-// @Success 200  {object}  doc_structs.MovieResponse "Объект фильма"
+// @Success 200  {object}  entities.Movie "Объект фильма"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
@@ -52,7 +52,7 @@ func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param movieID path dto.MovieID true "ID фильма"
+// @Param movieID path uint true "ID фильма"
 // @Param movieData body dto.UpdatedMovie true "Обновлённые данные фильма"
 //
 // @Success 204  {string}  "no response"
@@ -71,7 +71,7 @@ func (mh MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param movieID path dto.MovieID true "ID фильма"
+// @Param movieID path uint true "ID фильма"
 //
 // @Success 204  {string}  "no response"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -91,10 +91,10 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param sortType path dto.SortTypeKey true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
-// @Param sortOrder path dto.SortOrderKey false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
+// @Param sortType path uint true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
+// @Param sortOrder path uint false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
 //
-// @Success 200  {object}  doc_structs.MovieListResponse "Список фильмов"
+// @Success 200  {object}  []entities.Movie "Список фильмов"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse

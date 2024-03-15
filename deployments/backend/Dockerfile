@@ -13,7 +13,7 @@ RUN go mod download
 COPY ./. ./
 
 # Build the binary to copy it to the slim image
-RUN CGO_ENABLED=0 GOOS=linux go build -o filmlib-backend ./cmd/server/server.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o filmlib-backend ./cmd/server/main.go
 
 
 FROM alpine:latest AS build-release-stage

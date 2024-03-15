@@ -1,0 +1,504 @@
+basePath: /api/v1
+definitions:
+  apperrors.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  dto.NewActor:
+    properties:
+      dob:
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        - other
+        type: string
+      name:
+        type: string
+    type: object
+  dto.NewMovie:
+    properties:
+      actors:
+        items:
+          type: string
+        type: array
+      birthDate:
+        type: string
+      gender:
+        type: string
+      name:
+        type: string
+    type: object
+  dto.SearchResult:
+    properties:
+      actors:
+        items:
+          $ref: '#/definitions/entities.Actor'
+        type: array
+      movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
+    type: object
+  dto.UpdatedActor:
+    properties:
+      dob:
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        - other
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.UpdatedMovie:
+    properties:
+      actors:
+        items:
+          type: string
+        type: array
+      birthDate:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  entities.Actor:
+    properties:
+      birthDate:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
+      name:
+        type: string
+    type: object
+  entities.Movie:
+    properties:
+      actors:
+        items:
+          $ref: '#/definitions/entities.Actor'
+        type: array
+      description:
+        type: string
+      id:
+        type: integer
+      rating:
+        type: number
+      releaseDate:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: lolwut-lol@yandex.ru
+    name: Никита Архаров
+    url: https://t.me/loomingsorrowdescent
+  description: Бэкенд приложения "Фильмотека", который предоставляет REST API для
+    управления базой данных фильмов.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: FlimLibrary Backend API
+  version: "1.0"
+paths:
+  /actors/:
+    get:
+      consumes:
+      - application/json
+      description: Получить список всех актёров
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список актёров
+          schema:
+            items:
+              $ref: '#/definitions/entities.Actor'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Получить список актёров
+      tags:
+      - actors
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о новом актёре
+        in: body
+        name: actorData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewActor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Объект нового актёра
+          schema:
+            $ref: '#/definitions/entities.Actor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Создать актёра
+      tags:
+      - actors
+  /actors/{id}/:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить данные об актёре по его ID
+      parameters:
+      - description: ID актёра
+        in: path
+        name: actorID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no response
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Удалить данные об актёре
+      tags:
+      - actors
+    get:
+      consumes:
+      - application/json
+      description: Получить данные об актёре по его ID
+      parameters:
+      - description: ID актёра
+        in: path
+        name: actorID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Объект актёра
+          schema:
+            $ref: '#/definitions/entities.Actor'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Получить данные об актёре
+      tags:
+      - actors
+    patch:
+      consumes:
+      - application/json
+      description: Изменить данные об актёре по его ID
+      parameters:
+      - description: ID актёра
+        in: path
+        name: actorID
+        required: true
+        type: integer
+      - description: Обновлённые данные актёра
+        in: body
+        name: actorData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatedActor'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no response
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Изменить данные об актёре
+      tags:
+      - actors
+  /movies/:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные о новом фильме
+        in: body
+        name: movieData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.NewMovie'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Объект нового фильма
+          schema:
+            $ref: '#/definitions/entities.Movie'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Создать фильм
+      tags:
+      - movies
+  /movies/{id}/:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить данные об фильме по его ID
+      parameters:
+      - description: ID фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no response
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Удалить данные об фильме
+      tags:
+      - movies
+    get:
+      consumes:
+      - application/json
+      description: Получить данные об фильме по его ID
+      parameters:
+      - description: ID фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Объект фильма
+          schema:
+            $ref: '#/definitions/entities.Movie'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Получить данные об фильме
+      tags:
+      - movies
+    patch:
+      consumes:
+      - application/json
+      description: Изменить данные об фильме по его ID
+      parameters:
+      - description: ID фильма
+        in: path
+        name: movieID
+        required: true
+        type: integer
+      - description: Обновлённые данные фильма
+        in: body
+        name: movieData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdatedMovie'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: no response
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Изменить данные об фильме
+      tags:
+      - movies
+  /movies/{type}/{order}/:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Получить список всех фильмов
+        Если порядок сортировки не указан, для каждого типа есть порядок по умолчанию:
+        Для названия и даты возрастающий, для рейтинга - убывающий
+      parameters:
+      - description: Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)
+        in: path
+        name: sortType
+        required: true
+        type: integer
+      - description: Порядок сортировки (0 - возрастающий, 1 - убывающий)
+        in: path
+        name: sortOrder
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список фильмов
+          schema:
+            items:
+              $ref: '#/definitions/entities.Movie'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Получить список фильмов
+      tags:
+      - movies
+  /movies/search/:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Поиск фильма по строке
+        Строка ищется в названии фильма и списке актёров
+      parameters:
+      - description: Поисковый запрос
+        in: body
+        name: searchQuery
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список результатов
+          schema:
+            $ref: '#/definitions/dto.SearchResult'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Искать фильм
+      tags:
+      - movies
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

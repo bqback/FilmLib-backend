@@ -18,9 +18,9 @@ type SearchHandler struct {
 // @Accept  json
 // @Produce  json
 //
-// @Param searchQuery string true "Поисковый запрос"
+// @Param searchQuery body string true "Поисковый запрос"
 //
-// @Success 200  {object}  doc_structs.SearchResultResponse "Список результатов"
+// @Success 200  {object}  dto.SearchResult "Список результатов"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse

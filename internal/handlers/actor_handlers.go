@@ -22,7 +22,7 @@ type ActorHandler struct {
 //
 // @Param actorData body dto.NewActor true "Данные о новом актёре"
 //
-// @Success 200  {object}  doc_structs.ActorResponse "Объект нового актёра"
+// @Success 200  {object}  entities.Actor "Объект нового актёра"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
@@ -91,9 +91,9 @@ func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param actorID path dto.ActorID true "ID актёра"
+// @Param actorID path uint true "ID актёра"
 //
-// @Success 200  {object}  doc_structs.ActorResponse "Объект актёра"
+// @Success 200  {object}  entities.Actor "Объект актёра"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
@@ -109,7 +109,7 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param actorID path dto.ActorID true "ID актёра"
+// @Param actorID path uint true "ID актёра"
 // @Param actorData body dto.UpdatedActor true "Обновлённые данные актёра"
 //
 // @Success 204  {string}  "no response"
@@ -128,7 +128,7 @@ func (ah ActorHandler) UpdateActor(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Param actorID path dto.ActorID true "ID актёра"
+// @Param actorID path uint true "ID актёра"
 //
 // @Success 204  {string}  "no response"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -146,7 +146,7 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 //
-// @Success 200  {object}  doc_structs.ActorListResponse "Список актёров"
+// @Success 200  {object}  []entities.Actor "Список актёров"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse

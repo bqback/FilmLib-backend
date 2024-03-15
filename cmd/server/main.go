@@ -14,11 +14,26 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+
+	_ "filmlib/docs"
 )
 
 const configPath string = "config/config.yml"
 const envPath string = "config/.env"
 
+// @title           FlimLibrary Backend API
+// @version         1.0
+// @description     Бэкенд приложения "Фильмотека", который предоставляет REST API для управления базой данных фильмов.
+
+// @contact.name   Никита Архаров
+// @contact.url    https://t.me/loomingsorrowdescent
+// @contact.email  lolwut-lol@yandex.ru
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
 func main() {
 	config, err := config.LoadConfig(envPath, configPath)
 

@@ -7,6 +7,10 @@ import (
 	"filmlib/internal/handlers"
 	"filmlib/internal/logging"
 	"filmlib/internal/mux/middleware"
+
+	_ "filmlib/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *logging.LogrusLogger) *http.Handler {
@@ -21,6 +25,8 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 	movieSortParams := moviesBaseUrl + "{type}/{order}/"
 	moviesSpecificUrl := moviesBaseUrl + "{id}/"
 	moviesSearchUrl := moviesBaseUrl + "search/"
+
+	swaggerUrl := "/swagger/*"
 
 	mux.Handle("POST "+actorsBaseUrl, middleware.Stack(
 		wrapHandleFunc(handlers.ActorHandler.CreateActor),
@@ -75,6 +81,10 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 		middleware.JsonHeader, middleware.NewLogger(logger),
 		middleware.RequestID, middleware.PanicRecovery,
 	)
+
+	mux.HandleFunc("GET "+swaggerUrl, httpSwagger.Handler(
+		httpSwagger.URL("swagger/doc.json"),
+	))
 
 	return &mwStack
 }

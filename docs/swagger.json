@@ -1,0 +1,754 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Бэкенд приложения \"Фильмотека\", который предоставляет REST API для управления базой данных фильмов.",
+        "title": "FlimLibrary Backend API",
+        "contact": {
+            "name": "Никита Архаров",
+            "url": "https://t.me/loomingsorrowdescent",
+            "email": "lolwut-lol@yandex.ru"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/actors/": {
+            "get": {
+                "description": "Получить список всех актёров",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "Получить список актёров",
+                "responses": {
+                    "200": {
+                        "description": "Список актёров",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Actor"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "Создать актёра",
+                "parameters": [
+                    {
+                        "description": "Данные о новом актёре",
+                        "name": "actorData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewActor"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Объект нового актёра",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Actor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/actors/{id}/": {
+            "get": {
+                "description": "Получить данные об актёре по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "Получить данные об актёре",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID актёра",
+                        "name": "actorID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Объект актёра",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Actor"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить данные об актёре по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "Удалить данные об актёре",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID актёра",
+                        "name": "actorID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Изменить данные об актёре по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "actors"
+                ],
+                "summary": "Изменить данные об актёре",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID актёра",
+                        "name": "actorID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновлённые данные актёра",
+                        "name": "actorData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatedActor"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/movies/": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Создать фильм",
+                "parameters": [
+                    {
+                        "description": "Данные о новом фильме",
+                        "name": "movieData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.NewMovie"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Объект нового фильма",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Movie"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/movies/search/": {
+            "post": {
+                "description": "Поиск фильма по строке\nСтрока ищется в названии фильма и списке актёров",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Искать фильм",
+                "parameters": [
+                    {
+                        "description": "Поисковый запрос",
+                        "name": "searchQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список результатов",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SearchResult"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/movies/{id}/": {
+            "get": {
+                "description": "Получить данные об фильме по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Получить данные об фильме",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID фильма",
+                        "name": "movieID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Объект фильма",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Movie"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить данные об фильме по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Удалить данные об фильме",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID фильма",
+                        "name": "movieID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Изменить данные об фильме по его ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Изменить данные об фильме",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID фильма",
+                        "name": "movieID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Обновлённые данные фильма",
+                        "name": "movieData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatedMovie"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "no response",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/movies/{type}/{order}/": {
+            "get": {
+                "description": "Получить список всех фильмов\nЕсли порядок сортировки не указан, для каждого типа есть порядок по умолчанию:\nДля названия и даты возрастающий, для рейтинга - убывающий",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Получить список фильмов",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)",
+                        "name": "sortType",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Порядок сортировки (0 - возрастающий, 1 - убывающий)",
+                        "name": "sortOrder",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список фильмов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Movie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "apperrors.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NewActor": {
+            "type": "object",
+            "properties": {
+                "dob": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "other"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NewMovie": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "birthDate": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.SearchResult": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Actor"
+                    }
+                },
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Movie"
+                    }
+                }
+            }
+        },
+        "dto.UpdatedActor": {
+            "type": "object",
+            "properties": {
+                "dob": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "other"
+                    ]
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.UpdatedMovie": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "birthDate": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Actor": {
+            "type": "object",
+            "properties": {
+                "birthDate": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Movie"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Movie": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Actor"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "releaseDate": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}
