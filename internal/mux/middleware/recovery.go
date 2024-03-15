@@ -8,15 +8,13 @@ import (
 	"net/http"
 )
 
-const nodeName = "middleware"
-
 func PanicRecovery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if rcvr := recover(); rcvr != nil {
-				logger := *utils.GetReqLogger(r.Context())
-				if logger == nil {
-					log.Fatal("Logger missing from context")
+				logger, err := utils.GetReqLogger(r.Context())
+				if logger != nil {
+					log.Fatal(err.Error())
 					apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
 				}
 				logger.Error("*************** PANIC ***************")

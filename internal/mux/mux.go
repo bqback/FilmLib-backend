@@ -6,9 +6,10 @@ import (
 	"filmlib/internal/config"
 	"filmlib/internal/handlers"
 	"filmlib/internal/logging"
+	"filmlib/internal/mux/middleware"
 )
 
-func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *logging.LogrusLogger) *http.ServeMux {
+func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *logging.LogrusLogger) *http.Handler {
 	mux := http.NewServeMux()
 
 	baseUrl := config.API.BaseUrl
@@ -21,23 +22,63 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 	moviesSpecificUrl := moviesBaseUrl + "{id}/"
 	moviesSearchUrl := moviesBaseUrl + "search/"
 
-	mux.HandleFunc("POST "+actorsBaseUrl, handlers.ActorHandler.CreateActor)
+	mux.Handle("POST "+actorsBaseUrl, middleware.Stack(
+		wrapHandleFunc(handlers.ActorHandler.CreateActor),
+		middleware.Auth,
+	))
 	mux.HandleFunc("GET "+actorsBaseUrl, handlers.ActorHandler.GetActors)
-	mux.HandleFunc("GET "+actorsSpecificUrl, handlers.ActorHandler.ReadActor)
-	mux.HandleFunc("PATCH "+actorsSpecificUrl, handlers.ActorHandler.UpdateActor)
-	mux.HandleFunc("DELETE "+actorsSpecificUrl, handlers.ActorHandler.DeleteActor)
+	mux.Handle("GET "+actorsSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.ActorHandler.ReadActor),
+		middleware.ExtractID,
+	))
+	mux.Handle("PATCH "+actorsSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.ActorHandler.UpdateActor),
+		middleware.ExtractID,
+		middleware.Auth,
+	))
+	mux.Handle("DELETE "+actorsSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.ActorHandler.DeleteActor),
+		middleware.ExtractID,
+		middleware.Auth,
+	))
 
-	mux.HandleFunc("GET "+movieSortParams, handlers.MovieHandler.GetMovies)
-	mux.HandleFunc("POST "+moviesBaseUrl, handlers.MovieHandler.CreateMovie)
-	mux.HandleFunc("GET "+moviesSpecificUrl, handlers.MovieHandler.ReadMovie)
-	mux.HandleFunc("PATCH "+moviesSpecificUrl, handlers.MovieHandler.UpdateMovie)
-	mux.HandleFunc("DELETE "+moviesSpecificUrl, handlers.MovieHandler.DeleteMovie)
+	mux.Handle("GET "+movieSortParams, middleware.Stack(
+		wrapHandleFunc(handlers.MovieHandler.GetMovies),
+		middleware.ExtractSortParams,
+	))
+	mux.Handle("POST "+moviesBaseUrl, middleware.Stack(
+		wrapHandleFunc(handlers.MovieHandler.CreateMovie),
+		middleware.Auth,
+	))
+	mux.Handle("GET "+moviesSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.MovieHandler.ReadMovie),
+		middleware.ExtractID,
+	))
+	mux.Handle("PATCH "+moviesSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.MovieHandler.UpdateMovie),
+		middleware.ExtractID,
+		middleware.Auth,
+	))
+	mux.Handle("DELETE "+moviesSpecificUrl, middleware.Stack(
+		wrapHandleFunc(handlers.MovieHandler.DeleteMovie),
+		middleware.ExtractID,
+		middleware.Auth,
+	))
 
-	mux.HandleFunc("POST "+moviesSearchUrl, handlers.SearchHandler.Search)
+	mux.Handle("POST "+moviesSearchUrl, middleware.Stack(
+		wrapHandleFunc(handlers.SearchHandler.Search),
+		middleware.ExtractID,
+		middleware.Auth,
+	))
 
-	return mux
+	mwStack := middleware.Stack(mux,
+		middleware.JsonHeader, middleware.NewLogger(logger),
+		middleware.RequestID, middleware.PanicRecovery,
+	)
+
+	return &mwStack
 }
 
-// func stackMiddleware(middlewares ...http.Handler) http.Handler {
-
-// }
+func wrapHandleFunc(hf http.HandlerFunc) http.Handler {
+	return hf
+}
