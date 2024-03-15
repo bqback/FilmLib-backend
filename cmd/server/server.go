@@ -54,7 +54,7 @@ func main() {
 
 	var server = http.Server{
 		Addr:    fmt.Sprintf(":%d", config.Server.Port),
-		Handler: mux,
+		Handler: *mux,
 	}
 
 	logger.Info("Server is running")
