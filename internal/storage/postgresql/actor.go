@@ -6,6 +6,7 @@ import (
 	"filmlib/internal/apperrors"
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/pkg/entities"
+	"filmlib/internal/utils"
 
 	"github.com/Masterminds/squirrel"
 )
@@ -21,6 +22,13 @@ func NewActorStorage(db *sql.DB) *PgActorStorage {
 }
 
 func (s *PgActorStorage) Create(ctx context.Context, info dto.NewActor) (*entities.Actor, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "CreateActor"
+
 	newActor := &entities.Actor{
 		Name:      info.Name,
 		Gender:    info.Gender,
@@ -28,8 +36,8 @@ func (s *PgActorStorage) Create(ctx context.Context, info dto.NewActor) (*entiti
 	}
 
 	query1, args, err := squirrel.
-		Insert("public.user").
-		Columns("name", "gender", "dob").
+		Insert(actorTable).
+		Columns(allActorInsertFields...).
 		Values(info.Name, info.Gender, info.BirthDate).
 		PlaceholderFormat(squirrel.Dollar).
 		Suffix("RETURNING id").
@@ -50,7 +58,7 @@ func (s *PgActorStorage) Create(ctx context.Context, info dto.NewActor) (*entiti
 	var actorID int
 	row := s.db.QueryRow(query1, args...)
 	if err := row.Scan(&actorID); err != nil {
-		// logger.DebugFmt("Board insert failed with error "+err.Error(), requestID.String(), funcName, nodeName)
+		logger.DebugFmt("Actor insert failed with error "+err.Error(), requestID, funcName, nodeName)
 		// err = tx.Rollback()
 		// if err != nil {
 		// 	logger.DebugFmt("Transaction rollback failed with error "+err.Error(), requestID.String(), funcName, nodeName)
