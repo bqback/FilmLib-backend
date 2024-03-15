@@ -1,8 +1,14 @@
 package service
 
+import (
+	"context"
+	"filmlib/internal/pkg/dto"
+	"filmlib/internal/pkg/entities"
+)
+
 type IActorService interface {
 	// GetActors(context.Context) ([]*entities.Actor, error)
-	// Create(context.Context, dto.NewActor) (*entities.Actor, error)
+	Create(context.Context, dto.NewActor) (*entities.Actor, error)
 	// Read(context.Context, dto.ActorID) error
 	// Update(context.Context, dto.UpdatedActor) (*entities.Actor, error)
 	// Delete(context.Context, dto.ActorID) error

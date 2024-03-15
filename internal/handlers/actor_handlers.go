@@ -25,6 +25,7 @@ type ActorHandler struct {
 //
 // @Router /actors/ [post]
 func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
+
 }
 
 // @Summary Получить данные об актёре
