@@ -6,7 +6,7 @@ services:
     build: 
       context: .
       dockerfile: ./deployments/backend/Dockerfile
-    container_name: backend
+    container_name: filmlib-backend
     ports: 
       - 8080:8080
       - 8012:8012
@@ -27,7 +27,7 @@ services:
   
   db:
     image: postgres:latest
-    container_name: database
+    container_name: filmlib-db
     env_file:
       - ./config/.env
     ports:
