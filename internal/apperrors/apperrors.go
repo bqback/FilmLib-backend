@@ -6,8 +6,20 @@ import (
 )
 
 var (
+	ErrNilContext = errors.New("context is nil")
+)
+
+var (
 	ErrInvalidLoggingLevel      = errors.New("invalid logging level")
 	ErrLoggerMissingFromContext = errors.New("logger missing from context")
+)
+
+var (
+	ErrRequestIDMissingFromContext = errors.New("request ID is missing from context")
+)
+
+var (
+	ErrCouldNotParseURLParam = errors.New("failed to parse URL params")
 )
 
 var (
@@ -20,6 +32,10 @@ var (
 	ErrCouldNotBeginTransaction = errors.New("failed to start DB transaction")
 	ErrCouldNotRollback         = errors.New("failed to roll back after a failed query")
 	ErrCouldNotCommit           = errors.New("failed to commit DB transaction changes")
+)
+
+var (
+	ErrActorNotCreated = errors.New("failed to insert actor into database")
 )
 
 type ErrorResponse struct {

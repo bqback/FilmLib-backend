@@ -11,7 +11,7 @@ type Handlers struct {
 	SearchHandler
 }
 
-const nodeName = "handler"
+// const nodeName = "handler"
 
 // NewHandlers
 // возвращает HandlerManager со всеми хэндлерами приложения
