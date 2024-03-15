@@ -23,8 +23,10 @@ var (
 )
 
 var (
-	ErrEnvNotFound       = errors.New("unable to load .env file")
-	ErrDatabasePWMissing = errors.New("database password is missing from env")
+	ErrEnvNotFound         = errors.New("unable to load .env file")
+	ErrDatabaseUserMissing = errors.New("database user is missing from env")
+	ErrDatabasePWMissing   = errors.New("database password is missing from env")
+	ErrDatabaseNameMissing = errors.New("database name is missing from env")
 )
 
 var (

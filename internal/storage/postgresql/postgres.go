@@ -8,17 +8,17 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-// const nodeName = "storage"
+const nodeName = "storage"
 
 func GetDBConnection(conf config.DatabaseConfig) (*sql.DB, error) {
 	dbURL := fmt.Sprintf(
-		"postgres://%s:%s@%s:%d/%s?application_name=%s&search_path=%s&connect_timeout=%d",
+		"postgres://%s:%s@%s:%d/%s?&search_path=%s&connect_timeout=%d",
 		conf.User,
 		conf.Password,
 		conf.Host,
 		conf.Port,
 		conf.DBName,
-		conf.AppName,
+		// conf.AppName,
 		conf.Schema,
 		conf.ConnectionTimeout,
 	)

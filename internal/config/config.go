@@ -28,12 +28,12 @@ type LoggingConfig struct {
 }
 
 type DatabaseConfig struct {
-	User              string `yaml:"user"`
+	User              string `yaml:"-"`
 	Password          string `yaml:"-"`
 	Host              string `yaml:"-"`
 	Port              uint64 `yaml:"port"`
-	DBName            string `yaml:"db_name"`
-	AppName           string `yaml:"app_name"`
+	DBName            string `yaml:"-"`
+	AppName           string `yaml:"-"`
 	Schema            string `yaml:"schema"`
 	ConnectionTimeout uint64 `yaml:"connection_timeout"`
 }
@@ -42,7 +42,7 @@ type Config struct {
 	API      *APIConfig      `yaml:"api"`
 	Logging  *LoggingConfig  `yaml:"logging"`
 	Server   *ServerConfig   `yaml:"server"`
-	Database *DatabaseConfig `yaml:"config"`
+	Database *DatabaseConfig `yaml:"db"`
 }
 
 func LoadConfig(envPath string, configPath string) (*Config, error) {
@@ -72,7 +72,15 @@ func LoadConfig(envPath string, configPath string) (*Config, error) {
 		return nil, apperrors.ErrEnvNotFound
 	}
 
+	config.Database.User, err = GetDBUser()
+	if err != nil {
+		return nil, err
+	}
 	config.Database.Password, err = GetDBPassword()
+	if err != nil {
+		return nil, err
+	}
+	config.Database.DBName, err = GetDBName()
 	if err != nil {
 		return nil, err
 	}
@@ -95,10 +103,30 @@ func GetDBConnectionHost() string {
 
 // getDBConnectionHost
 // возвращает пароль из env для соединения с БД
+func GetDBUser() (string, error) {
+	user, uOk := os.LookupEnv("POSTGRES_USER")
+	if !uOk {
+		return "", apperrors.ErrDatabaseUserMissing
+	}
+	return user, nil
+}
+
+// getDBConnectionHost
+// возвращает пароль из env для соединения с БД
 func GetDBPassword() (string, error) {
 	pwd, pOk := os.LookupEnv("POSTGRES_PASSWORD")
 	if !pOk {
 		return "", apperrors.ErrDatabasePWMissing
 	}
 	return pwd, nil
+}
+
+// getDBConnectionHost
+// возвращает пароль из env для соединения с БД
+func GetDBName() (string, error) {
+	name, nOk := os.LookupEnv("POSTGRES_DB")
+	if !nOk {
+		return "", apperrors.ErrDatabaseNameMissing
+	}
+	return name, nil
 }
