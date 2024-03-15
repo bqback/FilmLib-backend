@@ -2,16 +2,27 @@ package utils
 
 import (
 	"context"
+	"filmlib/internal/apperrors"
 	"filmlib/internal/logging"
 	"filmlib/internal/pkg/dto"
 )
 
-func GetReqLogger(ctx context.Context) *logging.ILogger {
+func GetReqLogger(ctx context.Context) (logging.ILogger, error) {
 	if ctx == nil {
-		return nil
+		return nil, apperrors.ErrNilContext
 	}
 	if logger, ok := ctx.Value(dto.LoggerKey).(logging.ILogger); ok {
-		return &logger
+		return logger, nil
 	}
-	return nil
+	return nil, apperrors.ErrLoggerMissingFromContext
+}
+
+func GetReqID(ctx context.Context) (string, error) {
+	if ctx == nil {
+		return "", apperrors.ErrNilContext
+	}
+	if reqID, ok := ctx.Value(dto.RequestIDKey).(string); ok {
+		return reqID, nil
+	}
+	return "", apperrors.ErrRequestIDMissingFromContext
 }
