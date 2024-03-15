@@ -1,8 +1,15 @@
 package handlers
 
 import (
+	"encoding/json"
+	"filmlib/internal/apperrors"
+	"filmlib/internal/pkg/dto"
 	"filmlib/internal/service"
+	"filmlib/internal/utils"
+	"log"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type ActorHandler struct {
@@ -25,7 +32,62 @@ type ActorHandler struct {
 //
 // @Router /actors/ [post]
 func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
+	funcName := "CreateActor"
 
+	rCtx := r.Context()
+	logger, err := utils.GetReqLogger(rCtx)
+	if err != nil {
+		log.Println(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	requestID, err := utils.GetReqID(rCtx)
+	if err != nil {
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+	}
+
+	var newActor dto.NewActor
+	err = json.NewDecoder(r.Body).Decode(&newActor)
+	if err != nil {
+		logger.DebugFmt("Failed to decode request: "+err.Error(), requestID, funcName, nodeName)
+	}
+
+	err = validate.Struct(newActor)
+	if err != nil {
+		logger.Error("Validation failed")
+		if _, ok := err.(*validator.InvalidValidationError); ok {
+			logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		}
+
+		for _, err := range err.(validator.ValidationErrors) {
+			logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		}
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+
+	actor, err := ah.as.Create(rCtx, newActor)
+	if err != nil {
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Actor created", requestID, funcName, nodeName)
+
+	jsonResponse, err := json.Marshal(actor)
+	if err != nil {
+		logger.Error("Failed to marshal response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+	}
+
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		logger.Error("Failed to return response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	r.Body.Close()
 }
 
 // @Summary Получить данные об актёре
