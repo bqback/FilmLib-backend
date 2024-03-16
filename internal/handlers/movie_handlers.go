@@ -120,7 +120,7 @@ func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted movie ID", requestID, funcName, nodeName)
 
 	movie, err := mh.ms.Read(rCtx, movieID)
-	if ok := respondOnErr(err, movie, "No movie found with that ID", logger, requestID, funcName, w, r); ok {
+	if closed := respondOnErr(err, movie, "No movie found with that ID", logger, requestID, funcName, w, r); !closed {
 		r.Body.Close()
 	}
 }
@@ -180,7 +180,7 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted movie ID", requestID, funcName, nodeName)
 
 	err = mh.ms.Delete(rCtx, movieID)
-	if ok := respondOnErr(err, nil, "No movie found with that ID", logger, requestID, funcName, w, r); ok {
+	if closed := respondOnErr(err, nil, "No movie found with that ID", logger, requestID, funcName, w, r); !closed {
 		r.Body.Close()
 	}
 }

@@ -120,7 +120,7 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
 
 	actor, err := ah.as.Read(rCtx, actorID)
-	if ok := respondOnErr(err, actor, "No actor found with that ID", logger, requestID, funcName, w, r); ok {
+	if closed := respondOnErr(err, actor, "No actor found with that ID", logger, requestID, funcName, w, r); !closed {
 		r.Body.Close()
 	}
 }
@@ -180,7 +180,7 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
 
 	err = ah.as.Delete(rCtx, actorID)
-	if ok := respondOnErr(err, nil, "No actor found with that ID", logger, requestID, funcName, w, r); ok {
+	if closed := respondOnErr(err, nil, "No actor found with that ID", logger, requestID, funcName, w, r); !closed {
 		r.Body.Close()
 	}
 }

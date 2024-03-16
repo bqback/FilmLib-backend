@@ -54,40 +54,45 @@ func NewSearchHandler(as service.IActorService, ms service.IMovieService) *Searc
 	}
 }
 
+// respondOnErr
+// пишет в http.ResponseWriter ответ в зависимости от ошибки, отданной вызовом сервиса.
+// Если в качестве obj передан nil, пишет код 204 в заголовок ответа.
+// В остальных случаях пытается замаршалить obj и отдать его как JSON.
+// Возвращаемое значение bool определяет, закрыто ли тело запроса.
 func respondOnErr(
 	err error, obj interface{},
 	emptyResponse string,
 	logger logging.ILogger, requestID string, funcName string,
 	w http.ResponseWriter, r *http.Request,
 ) bool {
-	ok := false
+	closed := false
 	switch err {
 	case nil:
 		switch obj {
 		case nil:
 			w.WriteHeader(http.StatusNoContent)
-			ok = true
 		default:
 			jsonResponse, err := json.Marshal(obj)
 			if err != nil {
 				logger.Error("Failed to marshal response: " + err.Error())
 				apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+				closed = true
 			}
 
 			_, err = w.Write(jsonResponse)
 			if err != nil {
 				logger.Error("Failed to return response: " + err.Error())
 				apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+				closed = true
 			}
-			ok = true
 		}
 	case apperrors.ErrEmptyResult:
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(emptyResponse))
-		ok = true
 	default:
 		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
 		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		closed = true
 	}
-	return ok
+	return closed
 }
