@@ -422,9 +422,6 @@ const docTemplate = `{
         "/movies/{id}/": {
             "get": {
                 "description": "Получить данные об фильме по его ID",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -628,19 +625,22 @@ const docTemplate = `{
         "dto.NewMovie": {
             "type": "object",
             "properties": {
-                "actors": {
+                "description": {
+                    "type": "string"
+                },
+                "movie_actors": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
-                "birthDate": {
+                "rating": {
+                    "type": "number"
+                },
+                "release_date": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
-                },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }
@@ -659,9 +659,6 @@ const docTemplate = `{
                         "other"
                     ]
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "name": {
                     "type": "string"
                 }
@@ -670,22 +667,22 @@ const docTemplate = `{
         "dto.UpdatedMovie": {
             "type": "object",
             "properties": {
-                "actors": {
+                "description": {
+                    "type": "string"
+                },
+                "movie_actors": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
-                "birthDate": {
+                "rating": {
+                    "type": "number"
+                },
+                "release_date": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }

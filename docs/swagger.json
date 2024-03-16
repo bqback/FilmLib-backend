@@ -416,9 +416,6 @@
         "/movies/{id}/": {
             "get": {
                 "description": "Получить данные об фильме по его ID",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -622,19 +619,22 @@
         "dto.NewMovie": {
             "type": "object",
             "properties": {
-                "actors": {
+                "description": {
+                    "type": "string"
+                },
+                "movie_actors": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
-                "birthDate": {
+                "rating": {
+                    "type": "number"
+                },
+                "release_date": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
-                },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }
@@ -653,9 +653,6 @@
                         "other"
                     ]
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "name": {
                     "type": "string"
                 }
@@ -664,22 +661,22 @@
         "dto.UpdatedMovie": {
             "type": "object",
             "properties": {
-                "actors": {
+                "description": {
+                    "type": "string"
+                },
+                "movie_actors": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "integer"
                     }
                 },
-                "birthDate": {
+                "rating": {
+                    "type": "number"
+                },
+                "release_date": {
                     "type": "string"
                 },
-                "gender": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
+                "title": {
                     "type": "string"
                 }
             }

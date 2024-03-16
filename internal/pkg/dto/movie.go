@@ -5,7 +5,7 @@ import "time"
 type NewMovie struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	ReleaseDate time.Time `json:"release_date" db:"release"`
+	ReleaseDate time.Time `json:"release_date" db:"release_date"`
 	Rating      float32   `json:"rating"`
 	Actors      []uint64  `json:"movie_actors" db:"-"`
 }
@@ -14,7 +14,7 @@ type UpdatedMovie struct {
 	ID          uint64    `json:"-"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
-	ReleaseDate time.Time `json:"release_date" db:"release"`
+	ReleaseDate time.Time `json:"release_date" db:"release_date"`
 	Rating      float32   `json:"rating"`
 	Actors      []uint64  `json:"movie_actors" db:"-"`
 }

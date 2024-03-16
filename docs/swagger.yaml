@@ -36,15 +36,17 @@ definitions:
     type: object
   dto.NewMovie:
     properties:
-      actors:
+      description:
+        type: string
+      movie_actors:
         items:
-          type: string
+          type: integer
         type: array
-      birthDate:
+      rating:
+        type: number
+      release_date:
         type: string
-      gender:
-        type: string
-      name:
+      title:
         type: string
     type: object
   dto.UpdatedActor:
@@ -57,24 +59,22 @@ definitions:
         - female
         - other
         type: string
-      id:
-        type: integer
       name:
         type: string
     type: object
   dto.UpdatedMovie:
     properties:
-      actors:
+      description:
+        type: string
+      movie_actors:
         items:
-          type: string
+          type: integer
         type: array
-      birthDate:
+      rating:
+        type: number
+      release_date:
         type: string
-      gender:
-        type: string
-      id:
-        type: integer
-      name:
+      title:
         type: string
     type: object
   entities.Actor:
@@ -396,8 +396,6 @@ paths:
       tags:
       - movies
     get:
-      consumes:
-      - application/json
       description: Получить данные об фильме по его ID
       parameters:
       - description: ID фильма

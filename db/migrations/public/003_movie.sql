@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public.movie
     id serial NOT NULL,
     title text NOT NULL,
     description text NOT NULL,
-    release date NOT NULL, 
+    release_date date NOT NULL, 
     rating real NOT NULL,
     CONSTRAINT movie_pkey PRIMARY KEY (id),
     CONSTRAINT title_length_check CHECK (length(title) >= 1 AND length(title) <= 150),
