@@ -20,7 +20,7 @@ type SearchHandler struct {
 //
 // @Param searchQuery body string true "Поисковый запрос"
 //
-// @Success 200  {object}  dto.SearchResult "Список результатов"
+// @Success 200  {object}  entities.SearchResult "Список результатов"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse

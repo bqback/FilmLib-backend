@@ -7,6 +7,20 @@ definitions:
       message:
         type: string
     type: object
+  dto.ActorInfo:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.MovieInfo:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
   dto.NewActor:
     properties:
       dob:
@@ -32,17 +46,6 @@ definitions:
         type: string
       name:
         type: string
-    type: object
-  dto.SearchResult:
-    properties:
-      actors:
-        items:
-          $ref: '#/definitions/entities.Actor'
-        type: array
-      movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
-        type: array
     type: object
   dto.UpdatedActor:
     properties:
@@ -76,35 +79,46 @@ definitions:
     type: object
   entities.Actor:
     properties:
-      birthDate:
+      actor_movies:
+        items:
+          $ref: '#/definitions/dto.MovieInfo'
+        type: array
+      dob:
         type: string
       gender:
         type: string
       id:
         type: integer
-      movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
-        type: array
       name:
         type: string
     type: object
   entities.Movie:
     properties:
-      actors:
-        items:
-          $ref: '#/definitions/entities.Actor'
-        type: array
       description:
         type: string
       id:
         type: integer
+      movie_actors:
+        items:
+          $ref: '#/definitions/dto.ActorInfo'
+        type: array
       rating:
         type: number
-      releaseDate:
+      release_date:
         type: string
       title:
         type: string
+    type: object
+  entities.SearchResult:
+    properties:
+      actors:
+        items:
+          $ref: '#/definitions/entities.Actor'
+        type: array
+      movies:
+        items:
+          $ref: '#/definitions/entities.Movie'
+        type: array
     type: object
 host: localhost:8080
 info:
@@ -122,8 +136,6 @@ info:
 paths:
   /actors/:
     get:
-      consumes:
-      - application/json
       description: Получить список всех актёров
       produces:
       - application/json
@@ -183,8 +195,6 @@ paths:
       - actors
   /actors/{id}/:
     delete:
-      consumes:
-      - application/json
       description: Удалить данные об актёре по его ID
       parameters:
       - description: ID актёра
@@ -215,8 +225,6 @@ paths:
       tags:
       - actors
     get:
-      consumes:
-      - application/json
       description: Получить данные об актёре по его ID
       parameters:
       - description: ID актёра
@@ -285,6 +293,45 @@ paths:
       tags:
       - actors
   /movies/:
+    get:
+      description: |-
+        Получить список всех фильмов
+        Если порядок сортировки не указан, для каждого типа есть порядок по умолчанию:
+        Для названия и даты возрастающий, для рейтинга - убывающий
+      parameters:
+      - description: Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)
+        in: query
+        name: sortType
+        required: true
+        type: integer
+      - description: Порядок сортировки (0 - возрастающий, 1 - убывающий)
+        in: query
+        name: sortOrder
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список фильмов
+          schema:
+            items:
+              $ref: '#/definitions/entities.Movie'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Получить список фильмов
+      tags:
+      - movies
     post:
       consumes:
       - application/json
@@ -319,8 +366,6 @@ paths:
       - movies
   /movies/{id}/:
     delete:
-      consumes:
-      - application/json
       description: Удалить данные об фильме по его ID
       parameters:
       - description: ID фильма
@@ -420,48 +465,6 @@ paths:
       summary: Изменить данные об фильме
       tags:
       - movies
-  /movies/{type}/{order}/:
-    get:
-      consumes:
-      - application/json
-      description: |-
-        Получить список всех фильмов
-        Если порядок сортировки не указан, для каждого типа есть порядок по умолчанию:
-        Для названия и даты возрастающий, для рейтинга - убывающий
-      parameters:
-      - description: Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)
-        in: path
-        name: sortType
-        required: true
-        type: integer
-      - description: Порядок сортировки (0 - возрастающий, 1 - убывающий)
-        in: path
-        name: sortOrder
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Список фильмов
-          schema:
-            items:
-              $ref: '#/definitions/entities.Movie'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/apperrors.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/apperrors.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/apperrors.ErrorResponse'
-      summary: Получить список фильмов
-      tags:
-      - movies
   /movies/search/:
     post:
       consumes:
@@ -482,7 +485,7 @@ paths:
         "200":
           description: Список результатов
           schema:
-            $ref: '#/definitions/dto.SearchResult'
+            $ref: '#/definitions/entities.SearchResult'
         "400":
           description: Bad Request
           schema:
@@ -498,7 +501,4 @@ paths:
       summary: Искать фильм
       tags:
       - movies
-securityDefinitions:
-  BasicAuth:
-    type: basic
 swagger: "2.0"

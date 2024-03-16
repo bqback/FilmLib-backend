@@ -26,9 +26,6 @@ const docTemplate = `{
         "/actors/": {
             "get": {
                 "description": "Получить список всех актёров",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -119,9 +116,6 @@ const docTemplate = `{
         "/actors/{id}/": {
             "get": {
                 "description": "Получить данные об актёре по его ID",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -167,9 +161,6 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Удалить данные об актёре по его ID",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -272,6 +263,60 @@ const docTemplate = `{
             }
         },
         "/movies/": {
+            "get": {
+                "description": "Получить список всех фильмов\nЕсли порядок сортировки не указан, для каждого типа есть порядок по умолчанию:\nДля названия и даты возрастающий, для рейтинга - убывающий",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Получить список фильмов",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)",
+                        "name": "sortType",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Порядок сортировки (0 - возрастающий, 1 - убывающий)",
+                        "name": "sortOrder",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список фильмов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Movie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "consumes": [
                     "application/json"
@@ -350,7 +395,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Список результатов",
                         "schema": {
-                            "$ref": "#/definitions/dto.SearchResult"
+                            "$ref": "#/definitions/entities.SearchResult"
                         }
                     },
                     "400": {
@@ -425,9 +470,6 @@ const docTemplate = `{
             },
             "delete": {
                 "description": "Удалить данные об фильме по его ID",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -528,65 +570,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/movies/{type}/{order}/": {
-            "get": {
-                "description": "Получить список всех фильмов\nЕсли порядок сортировки не указан, для каждого типа есть порядок по умолчанию:\nДля названия и даты возрастающий, для рейтинга - убывающий",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "movies"
-                ],
-                "summary": "Получить список фильмов",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)",
-                        "name": "sortType",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Порядок сортировки (0 - возрастающий, 1 - убывающий)",
-                        "name": "sortOrder",
-                        "in": "path"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Список фильмов",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/entities.Movie"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -597,6 +580,28 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ActorInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MovieInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
                     "type": "string"
                 }
             }
@@ -637,23 +642,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                }
-            }
-        },
-        "dto.SearchResult": {
-            "type": "object",
-            "properties": {
-                "actors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Actor"
-                    }
-                },
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
                 }
             }
         },
@@ -705,7 +693,13 @@ const docTemplate = `{
         "entities.Actor": {
             "type": "object",
             "properties": {
-                "birthDate": {
+                "actor_movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.MovieInfo"
+                    }
+                },
+                "dob": {
                     "type": "string"
                 },
                 "gender": {
@@ -713,12 +707,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
                 },
                 "name": {
                     "type": "string"
@@ -728,33 +716,45 @@ const docTemplate = `{
         "entities.Movie": {
             "type": "object",
             "properties": {
-                "actors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Actor"
-                    }
-                },
                 "description": {
                     "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
+                "movie_actors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ActorInfo"
+                    }
+                },
                 "rating": {
                     "type": "number"
                 },
-                "releaseDate": {
+                "release_date": {
                     "type": "string"
                 },
                 "title": {
                     "type": "string"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        },
+        "entities.SearchResult": {
+            "type": "object",
+            "properties": {
+                "actors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Actor"
+                    }
+                },
+                "movies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.Movie"
+                    }
+                }
+            }
         }
     }
 }`

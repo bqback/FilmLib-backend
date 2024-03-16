@@ -31,7 +31,6 @@ func (mh MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 // @Description Получить данные об фильме по его ID
 // @Tags movies
 //
-// @Accept  json
 // @Produce  json
 //
 // @Param movieID path uint true "ID фильма"
@@ -68,7 +67,6 @@ func (mh MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 // @Description Удалить данные об фильме по его ID
 // @Tags movies
 //
-// @Accept  json
 // @Produce  json
 //
 // @Param movieID path uint true "ID фильма"
@@ -88,17 +86,16 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 // @Description Для названия и даты возрастающий, для рейтинга - убывающий
 // @Tags movies
 //
-// @Accept  json
 // @Produce  json
 //
-// @Param sortType path uint true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
-// @Param sortOrder path uint false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
+// @Param sortType query uint true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
+// @Param sortOrder query uint false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
 //
 // @Success 200  {object}  []entities.Movie "Список фильмов"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
 //
-// @Router /movies/{type}/{order}/ [get]
+// @Router /movies/ [get]
 func (mh MovieHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
 }

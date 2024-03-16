@@ -88,7 +88,6 @@ func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
 // @Description Получить данные об актёре по его ID
 // @Tags actors
 //
-// @Accept  json
 // @Produce  json
 //
 // @Param actorID path uint true "ID актёра"
@@ -125,7 +124,6 @@ func (ah ActorHandler) UpdateActor(w http.ResponseWriter, r *http.Request) {
 // @Description Удалить данные об актёре по его ID
 // @Tags actors
 //
-// @Accept  json
 // @Produce  json
 //
 // @Param actorID path uint true "ID актёра"
@@ -143,7 +141,6 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 // @Description Получить список всех актёров
 // @Tags actors
 //
-// @Accept  json
 // @Produce  json
 //
 // @Success 200  {object}  []entities.Actor "Список актёров"
