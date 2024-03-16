@@ -91,6 +91,34 @@ func (s *PgActorStorage) Read(ctx context.Context, id dto.ActorID) (*entities.Ac
 	return &actor, nil
 }
 
+func (s *PgActorStorage) Delete(ctx context.Context, id dto.ActorID) error {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return err
+	}
+
+	funcName := "DeleteActor"
+
+	query, args, err := squirrel.
+		Delete(actorTable).
+		Where(squirrel.Eq{actorIDField: id.Value}).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+	if _, err = s.db.Exec(query, args...); err != nil {
+		logger.DebugFmt("Actor delete failed with error "+err.Error(), requestID, funcName, nodeName)
+		return apperrors.ErrActorNotDeleted
+	}
+	logger.DebugFmt("Actor deleted", requestID, funcName, nodeName)
+
+	return nil
+}
+
 func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]dto.MovieInfo, error) {
 	logger, requestID, err := utils.GetLoggerAndID(ctx)
 	if err != nil {

@@ -41,6 +41,7 @@ var (
 var (
 	ErrActorNotCreated  = errors.New("failed to insert actor into database")
 	ErrActorNotSelected = errors.New("failed to select actor from database")
+	ErrActorNotDeleted  = errors.New("failed to delete actor from database")
 )
 
 var (

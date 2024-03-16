@@ -33,3 +33,7 @@ func (s *ActorService) Read(ctx context.Context, id dto.ActorID) (*entities.Acto
 	actor.Movies = movies
 	return actor, nil
 }
+
+func (s *ActorService) Delete(ctx context.Context, id dto.ActorID) error {
+	return s.as.Delete(ctx, id)
+}

@@ -176,6 +176,35 @@ func (ah ActorHandler) UpdateActor(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /actors/{id}/ [delete]
 func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
+	funcName := "DeleteActor"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	var actorID dto.ActorID
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	actorID.Value = id
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	err = ah.as.Delete(rCtx, actorID)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+	r.Body.Close()
 }
 
 // @Summary Получить список актёров
