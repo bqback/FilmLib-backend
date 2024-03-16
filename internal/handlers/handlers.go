@@ -63,18 +63,24 @@ func respondOnErr(
 	ok := false
 	switch err {
 	case nil:
-		jsonResponse, err := json.Marshal(obj)
-		if err != nil {
-			logger.Error("Failed to marshal response: " + err.Error())
-			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		}
+		switch obj {
+		case nil:
+			w.WriteHeader(http.StatusNoContent)
+			ok = true
+		default:
+			jsonResponse, err := json.Marshal(obj)
+			if err != nil {
+				logger.Error("Failed to marshal response: " + err.Error())
+				apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+			}
 
-		_, err = w.Write(jsonResponse)
-		if err != nil {
-			logger.Error("Failed to return response: " + err.Error())
-			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+			_, err = w.Write(jsonResponse)
+			if err != nil {
+				logger.Error("Failed to return response: " + err.Error())
+				apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+			}
+			ok = true
 		}
-		ok = true
 	case apperrors.ErrEmptyResult:
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(emptyResponse))

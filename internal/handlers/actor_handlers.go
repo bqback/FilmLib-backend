@@ -180,15 +180,9 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
 
 	err = ah.as.Delete(rCtx, actorID)
-	if err != nil {
-		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
+	if ok := respondOnErr(err, nil, "No actor found with that ID", logger, requestID, funcName, w, r); ok {
+		r.Body.Close()
 	}
-	logger.DebugFmt("Actor deleted", requestID, funcName, nodeName)
-
-	w.WriteHeader(http.StatusNoContent)
-	r.Body.Close()
 }
 
 // @Summary Получить список актёров

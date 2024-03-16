@@ -117,29 +117,12 @@ func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	movieID.Value = id
-	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+	logger.DebugFmt("Extracted movie ID", requestID, funcName, nodeName)
 
-	actor, err := mh.ms.Read(rCtx, movieID)
-	if err != nil {
-		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
+	movie, err := mh.ms.Read(rCtx, movieID)
+	if ok := respondOnErr(err, movie, "No movie found with that ID", logger, requestID, funcName, w, r); ok {
+		r.Body.Close()
 	}
-
-	jsonResponse, err := json.Marshal(actor)
-	if err != nil {
-		logger.Error("Failed to marshal response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-
-	_, err = w.Write(jsonResponse)
-	if err != nil {
-		logger.Error("Failed to return response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-	r.Body.Close()
 }
 
 // @Summary Изменить данные об фильме
@@ -194,17 +177,12 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	movieID.Value = id
-	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+	logger.DebugFmt("Extracted movie ID", requestID, funcName, nodeName)
 
 	err = mh.ms.Delete(rCtx, movieID)
-	if err != nil {
-		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
+	if ok := respondOnErr(err, nil, "No movie found with that ID", logger, requestID, funcName, w, r); ok {
+		r.Body.Close()
 	}
-
-	w.WriteHeader(http.StatusNoContent)
-	r.Body.Close()
 }
 
 // @Summary Получить список фильмов
