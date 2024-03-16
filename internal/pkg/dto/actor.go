@@ -9,7 +9,7 @@ type NewActor struct {
 }
 
 type UpdatedActor struct {
-	ID        uint64    `json:"id"`
+	ID        uint64    `json:"-"`
 	Name      string    `json:"name,omitempty" validate:"required_without_all=Gender BirthDate"`
 	Gender    string    `json:"gender,omitempty" validate:"oneof=male female other,required_without_all=Name BirthDate"`
 	BirthDate time.Time `json:"dob,omitempty"  validate:"datetime,required_without_all=Name Gender"`

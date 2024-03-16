@@ -35,7 +35,7 @@ func (s *PgActorStorage) Create(ctx context.Context, info dto.NewActor) (*entiti
 		BirthDate: info.BirthDate,
 	}
 
-	query1, args, err := squirrel.
+	query, args, err := squirrel.
 		Insert(actorTable).
 		Columns(allActorInsertFields...).
 		Values(info.Name, info.Gender, info.BirthDate).
@@ -49,7 +49,7 @@ func (s *PgActorStorage) Create(ctx context.Context, info dto.NewActor) (*entiti
 	logger.DebugFmt("Query built", requestID, funcName, nodeName)
 
 	var actorID int
-	row := s.db.QueryRow(query1, args...)
+	row := s.db.QueryRow(query, args...)
 	if err := row.Scan(&actorID); err != nil {
 		logger.DebugFmt("Actor insert failed with error "+err.Error(), requestID, funcName, nodeName)
 		return nil, apperrors.ErrActorNotCreated
@@ -116,7 +116,7 @@ func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]
 	err = s.db.Select(&movies, query, args...)
 	if err != nil {
 		logger.DebugFmt("Actor movies select failed with error "+err.Error(), requestID, funcName, nodeName)
-		return nil, apperrors.ErrActorNotSelected
+		return nil, apperrors.ErrActorMoviesNotSelected
 	}
 	logger.DebugFmt("Actor movies selected", requestID, funcName, nodeName)
 

@@ -32,6 +32,7 @@ var (
 
 var (
 	ErrCouldNotBuildQuery       = errors.New("failed to build SQL query")
+	ErrCouldNotPrepareStatement = errors.New("failed to prepare query statement")
 	ErrCouldNotBeginTransaction = errors.New("failed to start DB transaction")
 	ErrCouldNotRollback         = errors.New("failed to roll back after a failed query")
 	ErrCouldNotCommit           = errors.New("failed to commit DB transaction changes")
@@ -40,6 +41,17 @@ var (
 var (
 	ErrActorNotCreated  = errors.New("failed to insert actor into database")
 	ErrActorNotSelected = errors.New("failed to select actor from database")
+)
+
+var (
+	ErrMovieNotCreated  = errors.New("failed to insert movie into database")
+	ErrMovieNotSelected = errors.New("failed to select movie from database")
+)
+
+var (
+	ErrCouldNotLinkActor      = errors.New("failed to link actor to movie")
+	ErrActorMoviesNotSelected = errors.New("failed to get actor's movies")
+	ErrMovieActorsNotSelected = errors.New("failed to get movie's actors")
 )
 
 type ErrorResponse struct {

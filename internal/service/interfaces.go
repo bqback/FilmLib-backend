@@ -16,7 +16,7 @@ type IActorService interface {
 
 type IMovieService interface {
 	// GetMovies(context.Context, dto.SortOptions) ([]*entities.Movie, error)
-	// Create(context.Context, dto.NewMovie) (*entities.Movie, error)
+	Create(context.Context, dto.NewMovie) (*entities.Movie, error)
 	// Read(context.Context, dto.MovieID) (*entities.Movie, error)
 	// Update(context.Context, dto.UpdatedMovie) (*entities.Movie, error)
 	// Delete(context.Context, dto.MovieID) error

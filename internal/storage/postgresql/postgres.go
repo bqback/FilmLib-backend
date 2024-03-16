@@ -18,7 +18,6 @@ func GetDBConnection(conf config.DatabaseConfig) (*sqlx.DB, error) {
 		conf.Host,
 		conf.Port,
 		conf.DBName,
-		// conf.AppName,
 		conf.Schema,
 		conf.ConnectionTimeout,
 	)

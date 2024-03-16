@@ -19,8 +19,15 @@ var (
 var (
 	allActorInsertFields = []string{"name", "gender", "dob"}
 	allActorSelectFields = []string{"id", "name", "gender", "dob"}
+	actorInfoFields      = []string{"id", "name"}
 )
 
 var (
-	movieInfoFields = []string{"id", "title"}
+	allMovieInsertFields = []string{"title", "description", "release", "rating"}
+	movieInfoFields      = []string{"id", "title"}
+	// allMovieSelectFields = []string{"id", "title", "description", "release", "rating"}
+)
+
+var (
+	actorMovieFields = []string{"id_actor", "id_movie"}
 )

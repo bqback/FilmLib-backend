@@ -1,7 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
+	"filmlib/internal/apperrors"
+	"filmlib/internal/pkg/dto"
 	"filmlib/internal/service"
+	"filmlib/internal/utils"
 	"net/http"
 )
 
@@ -25,6 +29,59 @@ type MovieHandler struct {
 //
 // @Router /movies/ [post]
 func (mh MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
+	funcName := "CreateMovie"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	var newMovie dto.NewMovie
+	err = json.NewDecoder(r.Body).Decode(&newMovie)
+	if err != nil {
+		logger.DebugFmt("Failed to decode request: "+err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+
+	// err = validate.Struct(newMovie)
+	// if err != nil {
+	// 	logger.Error("Validation failed")
+	// 	if _, ok := err.(*validator.InvalidValidationError); ok {
+	// 		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+	// 	}
+
+	// 	for _, err := range err.(validator.ValidationErrors) {
+	// 		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+	// 	}
+	// 	apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+	// 	return
+	// }
+
+	actor, err := mh.ms.Create(rCtx, newMovie)
+	if err != nil {
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Movie created", requestID, funcName, nodeName)
+
+	jsonResponse, err := json.Marshal(actor)
+	if err != nil {
+		logger.Error("Failed to marshal response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		logger.Error("Failed to return response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	r.Body.Close()
 }
 
 // @Summary Получить данные об фильме

@@ -1,18 +1,22 @@
 package dto
 
+import "time"
+
 type NewMovie struct {
-	Name        string
-	Gender      string
-	ReleaseDate string `json:"release_date" db:"release"`
-	Actors      []string
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	ReleaseDate time.Time `json:"release_date" db:"release"`
+	Rating      float32   `json:"rating"`
+	Actors      []uint64  `json:"movie_actors" db:"-"`
 }
 
 type UpdatedMovie struct {
-	ID          uint64
-	Name        string
-	Gender      string
-	ReleaseDate string `json:"release_date" db:"release"`
-	Actors      []string
+	ID          uint64    `json:"-"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	ReleaseDate time.Time `json:"release_date" db:"release"`
+	Rating      float32   `json:"rating"`
+	Actors      []uint64  `json:"movie_actors" db:"-"`
 }
 
 type MovieInfo struct {

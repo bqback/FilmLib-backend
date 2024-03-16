@@ -18,10 +18,10 @@ type IActorStorage interface {
 
 type IMovieStorage interface {
 	// GetMovies(context.Context, dto.SortOptions) ([]*entities.Movie, error)
-	// Create(context.Context, dto.NewMovie) (*entities.Movie, error)
+	Create(context.Context, dto.NewMovie) (*entities.Movie, error)
 	// Read(context.Context, dto.MovieID) (*entities.Movie, error)
 	// Update(context.Context, dto.UpdatedMovie) (*entities.Movie, error)
 	// Delete(context.Context, dto.MovieID) error
-	// GetMovieActors(context.Context, dto.MovieID) ([]*dto.ActorInfo, error)
+	GetMovieActors(context.Context, dto.MovieID) ([]dto.ActorInfo, error)
 	// FindByTitle(context.Context, string) ([]*entites.Movie, error)
 }
