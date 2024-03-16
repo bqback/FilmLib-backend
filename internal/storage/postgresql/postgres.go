@@ -1,16 +1,16 @@
 package postgresql
 
 import (
-	"database/sql"
 	"filmlib/internal/config"
 	"fmt"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jmoiron/sqlx"
 )
 
 const nodeName = "storage"
 
-func GetDBConnection(conf config.DatabaseConfig) (*sql.DB, error) {
+func GetDBConnection(conf config.DatabaseConfig) (*sqlx.DB, error) {
 	dbURL := fmt.Sprintf(
 		"postgres://%s:%s@%s:%d/%s?&search_path=%s&connect_timeout=%d",
 		conf.User,
@@ -23,7 +23,7 @@ func GetDBConnection(conf config.DatabaseConfig) (*sql.DB, error) {
 		conf.ConnectionTimeout,
 	)
 
-	db, err := sql.Open("pgx", dbURL)
+	db, err := sqlx.Connect("pgx", dbURL)
 	if err != nil {
 		return nil, err
 	}
