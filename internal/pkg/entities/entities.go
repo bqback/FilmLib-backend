@@ -17,12 +17,12 @@ type Movie struct {
 	ID          uint64          `json:"id"`
 	Title       string          `json:"title"`
 	Description string          `json:"description"`
-	ReleaseDate time.Time       `json:"release_date"`
+	ReleaseDate time.Time       `json:"release_date" db:"release"`
 	Rating      float32         `json:"rating"`
-	Actors      []dto.ActorInfo `json:"movie_actors"`
+	Actors      []dto.ActorInfo `json:"movie_actors" db:"-"`
 }
 
 type SearchResult struct {
-	Actors []*Actor
-	Movies []*Movie
+	Actors []Actor `json:"actors"`
+	Movies []Movie `json:"movies"`
 }

@@ -22,5 +22,14 @@ func (s *ActorService) Create(ctx context.Context, info dto.NewActor) (*entities
 }
 
 func (s *ActorService) Read(ctx context.Context, id dto.ActorID) (*entities.Actor, error) {
-	return s.as.Read(ctx, id)
+	actor, err := s.as.Read(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	movies, err := s.as.GetActorMovies(ctx, dto.ActorID{Value: actor.ID})
+	if err != nil {
+		return nil, err
+	}
+	actor.Movies = movies
+	return actor, nil
 }

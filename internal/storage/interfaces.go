@@ -12,7 +12,7 @@ type IActorStorage interface {
 	Read(context.Context, dto.ActorID) (*entities.Actor, error)
 	// Update(context.Context, dto.UpdatedActor) (*entities.Actor, error)
 	// Delete(context.Context, dto.ActorID) error
-	// GetActorMovies(context.Context, dto.ActorID) ([]*entities.Movie, error)
+	GetActorMovies(context.Context, dto.ActorID) ([]dto.MovieInfo, error)
 	// FindByName(context.Context, string) ([]*entites.Actor, error)
 }
 
@@ -22,6 +22,6 @@ type IMovieStorage interface {
 	// Read(context.Context, dto.MovieID) (*entities.Movie, error)
 	// Update(context.Context, dto.UpdatedMovie) (*entities.Movie, error)
 	// Delete(context.Context, dto.MovieID) error
-	// GetMovieActors(context.Context, dto.MovieID) ([]*entities.Actor, error)
+	// GetMovieActors(context.Context, dto.MovieID) ([]*dto.ActorInfo, error)
 	// FindByTitle(context.Context, string) ([]*entites.Movie, error)
 }

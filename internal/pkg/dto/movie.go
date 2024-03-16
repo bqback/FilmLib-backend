@@ -1,18 +1,18 @@
 package dto
 
 type NewMovie struct {
-	Name      string
-	Gender    string
-	BirthDate string
-	Actors    []string
+	Name        string
+	Gender      string
+	ReleaseDate string `json:"release_date" db:"release"`
+	Actors      []string
 }
 
 type UpdatedMovie struct {
-	ID        uint64
-	Name      string
-	Gender    string
-	BirthDate string
-	Actors    []string
+	ID          uint64
+	Name        string
+	Gender      string
+	ReleaseDate string `json:"release_date" db:"release"`
+	Actors      []string
 }
 
 type MovieInfo struct {

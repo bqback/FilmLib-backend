@@ -90,3 +90,35 @@ func (s *PgActorStorage) Read(ctx context.Context, id dto.ActorID) (*entities.Ac
 
 	return &actor, nil
 }
+
+func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]dto.MovieInfo, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "GetActorMovies"
+
+	query, args, err := squirrel.
+		Select(movieInfoFields...).
+		From(movieTable).
+		LeftJoin(actorMovieTable + " ON " + actorMovieMovieIDField + "=" + movieIDField).
+		Where(squirrel.Eq{actorMovieActorIDField: id.Value}).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+	var movies []dto.MovieInfo
+	err = s.db.Select(&movies, query, args...)
+	if err != nil {
+		logger.DebugFmt("Actor movies select failed with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrActorNotSelected
+	}
+	logger.DebugFmt("Actor movies selected", requestID, funcName, nodeName)
+
+	return movies, nil
+}
