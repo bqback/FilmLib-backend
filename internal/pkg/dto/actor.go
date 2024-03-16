@@ -15,6 +15,11 @@ type UpdatedActor struct {
 	BirthDate time.Time `json:"dob,omitempty"  validate:"datetime,required_without_all=Name Gender"`
 }
 
+type ActorInfo struct {
+	ID   uint64 `json:"id"`
+	Name string `json:"name"`
+}
+
 type ActorID struct {
 	Value uint64
 }

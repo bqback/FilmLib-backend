@@ -1,20 +1,28 @@
 package entities
 
-import "time"
+import (
+	"filmlib/internal/pkg/dto"
+	"time"
+)
 
 type Actor struct {
-	ID        uint64
-	Name      string
-	Gender    string
-	BirthDate time.Time
-	Movies    []Movie
+	ID        uint64          `json:"id"`
+	Name      string          `json:"name"`
+	Gender    string          `json:"gender"`
+	BirthDate time.Time       `json:"dob"`
+	Movies    []dto.MovieInfo `json:"actor_movies"`
 }
 
 type Movie struct {
-	ID          uint64
-	Title       string
-	Description string
-	ReleaseDate time.Time
-	Rating      float32
-	Actors      []Actor
+	ID          uint64          `json:"id"`
+	Title       string          `json:"title"`
+	Description string          `json:"description"`
+	ReleaseDate time.Time       `json:"release_date"`
+	Rating      float32         `json:"rating"`
+	Actors      []dto.ActorInfo `json:"movie_actors"`
+}
+
+type SearchResult struct {
+	Actors []*Actor
+	Movies []*Movie
 }
