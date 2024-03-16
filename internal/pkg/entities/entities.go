@@ -17,7 +17,7 @@ type Movie struct {
 	ID          uint64          `json:"id"`
 	Title       string          `json:"title"`
 	Description string          `json:"description"`
-	ReleaseDate time.Time       `json:"release_date" db:"release"`
+	ReleaseDate time.Time       `json:"release_date" db:"release_date"`
 	Rating      float32         `json:"rating"`
 	Actors      []dto.ActorInfo `json:"movie_actors" db:"-"`
 }

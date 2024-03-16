@@ -99,6 +99,47 @@ func (mh MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /movies/{id}/ [get]
 func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
+	funcName := "ReadMovie"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	var movieID dto.MovieID
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	movieID.Value = id
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	actor, err := mh.ms.Read(rCtx, movieID)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	jsonResponse, err := json.Marshal(actor)
+	if err != nil {
+		logger.Error("Failed to marshal response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		logger.Error("Failed to return response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	r.Body.Close()
 }
 
 // @Summary Изменить данные об фильме
@@ -135,6 +176,35 @@ func (mh MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /movies/{id}/ [delete]
 func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
+	funcName := "DeleteMovie"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	var movieID dto.MovieID
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	movieID.Value = id
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	err = mh.ms.Delete(rCtx, movieID)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+	r.Body.Close()
 }
 
 // @Summary Получить список фильмов

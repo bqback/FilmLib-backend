@@ -23,9 +23,9 @@ var (
 )
 
 var (
-	allMovieInsertFields = []string{"title", "description", "release", "rating"}
+	allMovieInsertFields = []string{"title", "description", "release_date", "rating"}
 	movieInfoFields      = []string{"id", "title"}
-	// allMovieSelectFields = []string{"id", "title", "description", "release", "rating"}
+	allMovieSelectFields = []string{"id", "title", "description", "release_date", "rating"}
 )
 
 var (

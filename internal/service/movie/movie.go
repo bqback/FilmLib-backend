@@ -29,3 +29,20 @@ func (s *MovieService) Create(ctx context.Context, info dto.NewMovie) (*entities
 	movie.Actors = actors
 	return movie, nil
 }
+
+func (s *MovieService) Read(ctx context.Context, id dto.MovieID) (*entities.Movie, error) {
+	movie, err := s.ms.Read(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	actors, err := s.ms.GetMovieActors(ctx, dto.MovieID{Value: movie.ID})
+	if err != nil {
+		return nil, err
+	}
+	movie.Actors = actors
+	return movie, nil
+}
+
+func (s *MovieService) Delete(ctx context.Context, id dto.MovieID) error {
+	return s.ms.Delete(ctx, id)
+}

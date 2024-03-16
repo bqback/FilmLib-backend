@@ -112,6 +112,36 @@ func (s *PgMovieStorage) Create(ctx context.Context, info dto.NewMovie) (*entiti
 	return newMovie, nil
 }
 
+func (s *PgMovieStorage) Read(ctx context.Context, id dto.MovieID) (*entities.Movie, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "ReadMovie"
+
+	query, args, err := squirrel.
+		Select(allMovieSelectFields...).
+		From(movieTable).
+		Where(squirrel.Eq{movieIDField: id.Value}).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+	var movie entities.Movie
+	if err := s.db.Get(&movie, query, args...); err != nil {
+		logger.DebugFmt("Movie select failed with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrMovieNotSelected
+	}
+	logger.DebugFmt("Movie selected", requestID, funcName, nodeName)
+
+	return &movie, nil
+}
+
 func (s *PgMovieStorage) GetMovieActors(ctx context.Context, id dto.MovieID) ([]dto.ActorInfo, error) {
 	logger, requestID, err := utils.GetLoggerAndID(ctx)
 	if err != nil {
