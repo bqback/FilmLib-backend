@@ -36,6 +36,7 @@ var (
 	ErrCouldNotBeginTransaction = errors.New("failed to start DB transaction")
 	ErrCouldNotRollback         = errors.New("failed to roll back after a failed query")
 	ErrCouldNotCommit           = errors.New("failed to commit DB transaction changes")
+	ErrEmptyResult              = errors.New("no results for provided query")
 )
 
 var (

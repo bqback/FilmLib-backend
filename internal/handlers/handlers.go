@@ -1,8 +1,12 @@
 package handlers
 
 import (
+	"encoding/json"
+	"filmlib/internal/apperrors"
 	"filmlib/internal/config"
+	"filmlib/internal/logging"
 	"filmlib/internal/service"
+	"net/http"
 )
 
 type Handlers struct {
@@ -48,4 +52,36 @@ func NewSearchHandler(as service.IActorService, ms service.IMovieService) *Searc
 		as: as,
 		ms: ms,
 	}
+}
+
+func respondOnErr(
+	err error, obj interface{},
+	emptyResponse string,
+	logger logging.ILogger, requestID string, funcName string,
+	w http.ResponseWriter, r *http.Request,
+) bool {
+	ok := false
+	switch err {
+	case nil:
+		jsonResponse, err := json.Marshal(obj)
+		if err != nil {
+			logger.Error("Failed to marshal response: " + err.Error())
+			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		}
+
+		_, err = w.Write(jsonResponse)
+		if err != nil {
+			logger.Error("Failed to return response: " + err.Error())
+			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		}
+		ok = true
+	case apperrors.ErrEmptyResult:
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte(emptyResponse))
+		ok = true
+	default:
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+	}
+	return ok
 }

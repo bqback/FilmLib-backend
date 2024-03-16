@@ -120,26 +120,9 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
 
 	actor, err := ah.as.Read(rCtx, actorID)
-	if err != nil {
-		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
+	if ok := respondOnErr(err, actor, "No actor found with that ID", logger, requestID, funcName, w, r); ok {
+		r.Body.Close()
 	}
-
-	jsonResponse, err := json.Marshal(actor)
-	if err != nil {
-		logger.Error("Failed to marshal response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-
-	_, err = w.Write(jsonResponse)
-	if err != nil {
-		logger.Error("Failed to return response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-	r.Body.Close()
 }
 
 // @Summary Изменить данные об актёре
@@ -202,6 +185,7 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
 		return
 	}
+	logger.DebugFmt("Actor deleted", requestID, funcName, nodeName)
 
 	w.WriteHeader(http.StatusNoContent)
 	r.Body.Close()

@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"context"
+	"database/sql"
 	"filmlib/internal/apperrors"
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/pkg/entities"
@@ -84,6 +85,9 @@ func (s *PgActorStorage) Read(ctx context.Context, id dto.ActorID) (*entities.Ac
 	var actor entities.Actor
 	if err := s.db.Get(&actor, query, args...); err != nil {
 		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrEmptyResult
+		}
 		return nil, apperrors.ErrActorNotSelected
 	}
 	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
@@ -112,6 +116,9 @@ func (s *PgActorStorage) Delete(ctx context.Context, id dto.ActorID) error {
 
 	if _, err = s.db.Exec(query, args...); err != nil {
 		logger.DebugFmt("Actor delete failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return apperrors.ErrEmptyResult
+		}
 		return apperrors.ErrActorNotDeleted
 	}
 	logger.DebugFmt("Actor deleted", requestID, funcName, nodeName)
