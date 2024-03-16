@@ -9,8 +9,8 @@ type Actor struct {
 	ID        uint64          `json:"id"`
 	Name      string          `json:"name"`
 	Gender    string          `json:"gender"`
-	BirthDate time.Time       `json:"dob"`
-	Movies    []dto.MovieInfo `json:"actor_movies"`
+	BirthDate time.Time       `json:"dob" db:"dob"`
+	Movies    []dto.MovieInfo `json:"actor_movies" db:"-"`
 }
 
 type Movie struct {

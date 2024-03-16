@@ -10,16 +10,17 @@ var (
 )
 
 var (
-	ErrInvalidLoggingLevel      = errors.New("invalid logging level")
-	ErrLoggerMissingFromContext = errors.New("logger missing from context")
+	ErrInvalidLoggingLevel = errors.New("invalid logging level")
+	ErrLoggerMissing       = errors.New("logger missing from context")
 )
 
 var (
-	ErrRequestIDMissingFromContext = errors.New("request ID is missing from context")
+	ErrRequestIDMissing = errors.New("request ID is missing from context")
 )
 
 var (
 	ErrCouldNotParseURLParam = errors.New("failed to parse URL params")
+	ErrURLParamMissing       = errors.New("url param is missing from context")
 )
 
 var (
@@ -37,7 +38,8 @@ var (
 )
 
 var (
-	ErrActorNotCreated = errors.New("failed to insert actor into database")
+	ErrActorNotCreated  = errors.New("failed to insert actor into database")
+	ErrActorNotSelected = errors.New("failed to select actor from database")
 )
 
 type ErrorResponse struct {

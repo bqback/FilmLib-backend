@@ -99,6 +99,47 @@ func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /actors/{id}/ [get]
 func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
+	funcName := "ReadActor"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	var actorID dto.ActorID
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	actorID.Value = id
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	actor, err := ah.as.Read(rCtx, actorID)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	jsonResponse, err := json.Marshal(actor)
+	if err != nil {
+		logger.Error("Failed to marshal response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		logger.Error("Failed to return response: " + err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	r.Body.Close()
 }
 
 // @Summary Изменить данные об актёре

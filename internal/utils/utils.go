@@ -15,7 +15,7 @@ func GetReqLogger(ctx context.Context) (logging.ILogger, error) {
 	if logger, ok := ctx.Value(dto.LoggerKey).(logging.ILogger); ok {
 		return logger, nil
 	}
-	return nil, apperrors.ErrLoggerMissingFromContext
+	return nil, apperrors.ErrLoggerMissing
 }
 
 func GetReqID(ctx context.Context) (string, error) {
@@ -25,13 +25,23 @@ func GetReqID(ctx context.Context) (string, error) {
 	if reqID, ok := ctx.Value(dto.RequestIDKey).(string); ok {
 		return reqID, nil
 	}
-	return "", apperrors.ErrRequestIDMissingFromContext
+	return "", apperrors.ErrRequestIDMissing
+}
+
+func GetIDParam(ctx context.Context) (uint64, error) {
+	if ctx == nil {
+		return 0, apperrors.ErrNilContext
+	}
+	if id, ok := ctx.Value(dto.IDKey).(uint64); ok {
+		return id, nil
+	}
+	return 0, apperrors.ErrURLParamMissing
 }
 
 func GetLoggerAndID(ctx context.Context) (logging.ILogger, string, error) {
 	logger, err := GetReqLogger(ctx)
 	if err != nil {
-		log.Println(apperrors.ErrLoggerMissingFromContext)
+		log.Println(apperrors.ErrLoggerMissing)
 		return nil, "", err
 	}
 	requestID, err := GetReqID(ctx)

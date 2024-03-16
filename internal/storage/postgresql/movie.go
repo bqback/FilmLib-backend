@@ -1,12 +1,12 @@
 package postgresql
 
-import "database/sql"
+import "github.com/jmoiron/sqlx"
 
 type PgMovieStorage struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
-func NewMovieStorage(db *sql.DB) *PgMovieStorage {
+func NewMovieStorage(db *sqlx.DB) *PgMovieStorage {
 	return &PgMovieStorage{
 		db: db,
 	}

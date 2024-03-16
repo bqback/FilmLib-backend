@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"database/sql"
 	"filmlib/internal/storage/postgresql"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type Storages struct {
@@ -10,7 +11,7 @@ type Storages struct {
 	Movie IMovieStorage
 }
 
-func NewPostgresStorages(db *sql.DB) *Storages {
+func NewPostgresStorages(db *sqlx.DB) *Storages {
 	return &Storages{
 		Actor: postgresql.NewActorStorage(db),
 		Movie: postgresql.NewMovieStorage(db),

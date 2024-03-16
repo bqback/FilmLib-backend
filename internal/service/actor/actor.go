@@ -20,3 +20,7 @@ func NewActorService(actorStorage storage.IActorStorage) *ActorService {
 func (s *ActorService) Create(ctx context.Context, info dto.NewActor) (*entities.Actor, error) {
 	return s.as.Create(ctx, info)
 }
+
+func (s *ActorService) Read(ctx context.Context, id dto.ActorID) (*entities.Actor, error) {
+	return s.as.Read(ctx, id)
+}
