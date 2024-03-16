@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public."user"
+CREATE TABLE IF NOT EXISTS public.user
 (
     id serial NOT NULL,
     login text NOT NULL,
@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS public."user"
 
 ---- create above / drop below ----
 
-DROP TABLE IF EXISTS public."user";
+DROP TABLE IF EXISTS public.user;

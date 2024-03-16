@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public."movie"
+CREATE TABLE IF NOT EXISTS public.movie
 (
     id serial NOT NULL,
     title text NOT NULL,
@@ -13,4 +13,4 @@ CREATE TABLE IF NOT EXISTS public."movie"
 
 ---- create above / drop below ----
 
-DROP TABLE IF EXISTS public."movie";
+DROP TABLE IF EXISTS public.movie;

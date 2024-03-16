@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS public."actor"
+CREATE TABLE IF NOT EXISTS public.actor
 (
     id serial NOT NULL,
     name text NOT NULL,
@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS public."actor"
 
 ---- create above / drop below ----
 
-DROP TABLE IF EXISTS public."actor";
+DROP TABLE IF EXISTS public.actor;
