@@ -47,6 +47,7 @@ var (
 var (
 	ErrMovieNotCreated  = errors.New("failed to insert movie into database")
 	ErrMovieNotSelected = errors.New("failed to select movie from database")
+	ErrMovieNotDeleted  = errors.New("failed to delete movie from database")
 )
 
 var (
