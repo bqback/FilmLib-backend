@@ -109,17 +109,6 @@ definitions:
       title:
         type: string
     type: object
-  entities.SearchResult:
-    properties:
-      actors:
-        items:
-          $ref: '#/definitions/entities.Actor'
-        type: array
-      movies:
-        items:
-          $ref: '#/definitions/entities.Movie'
-        type: array
-    type: object
 host: localhost:8080
 info:
   contact:
@@ -301,12 +290,12 @@ paths:
       parameters:
       - description: Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)
         in: query
-        name: sortType
+        name: sort
         required: true
         type: integer
       - description: Порядок сортировки (0 - возрастающий, 1 - убывающий)
         in: query
-        name: sortOrder
+        name: order
         type: integer
       produces:
       - application/json
@@ -463,8 +452,8 @@ paths:
       summary: Изменить данные об фильме
       tags:
       - movies
-  /movies/search/:
-    post:
+  /search/movie/:
+    get:
       consumes:
       - application/json
       description: |-
@@ -472,18 +461,19 @@ paths:
         Строка ищется в названии фильма и списке актёров
       parameters:
       - description: Поисковый запрос
-        in: body
-        name: searchQuery
+        in: query
+        name: query
         required: true
-        schema:
-          type: string
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: Список результатов
           schema:
-            $ref: '#/definitions/entities.SearchResult'
+            items:
+              $ref: '#/definitions/entities.Movie'
+            type: array
         "400":
           description: Bad Request
           schema:

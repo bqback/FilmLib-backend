@@ -6,12 +6,12 @@ import (
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/utils"
 	"net/http"
-	"strconv"
+	"strings"
 )
 
-func ExtractID(next http.Handler) http.Handler {
+func ExtractQuery(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		funcName := "ExtractID"
+		funcName := "ExtractQuery"
 
 		logger, requestID, err := utils.GetLoggerAndID(r.Context())
 		if err != nil {
@@ -19,20 +19,14 @@ func ExtractID(next http.Handler) http.Handler {
 			return
 		}
 
-		idString := r.PathValue("id")
+		searchString := strings.ToLower(r.URL.Query().Get("query"))
 
-		if idString == "" {
-			logger.DebugFmt("couldn't parse ID from URL", requestID, funcName, nodeName)
+		if searchString == "" {
+			logger.DebugFmt("empty search", requestID, funcName, nodeName)
 			apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
 			return
 		}
-		id, err := strconv.ParseUint(idString, 10, 64)
-		if err != nil {
-			logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
-			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-			return
-		}
-		rCtx := context.WithValue(r.Context(), dto.IDKey, id)
+		rCtx := context.WithValue(r.Context(), dto.SearchTermKey, searchString)
 		logger.DebugFmt("Stored in context", requestID, funcName, nodeName)
 
 		next.ServeHTTP(w, r.WithContext(rCtx))

@@ -25,7 +25,7 @@ func NewHandlers(services *service.Services, config *config.Config) *Handlers {
 	return &Handlers{
 		ActorHandler:  *NewActorHandler(services.Actor),
 		MovieHandler:  *NewMovieHandler(services.Movie),
-		SearchHandler: *NewSearchHandler(services.Actor, services.Movie),
+		SearchHandler: *NewSearchHandler(services.Search),
 	}
 }
 
@@ -47,10 +47,9 @@ func NewActorHandler(as service.IActorService) *ActorHandler {
 
 // NewScanHandler
 // возвращает ScanHandler с необходимыми сервисами
-func NewSearchHandler(as service.IActorService, ms service.IMovieService) *SearchHandler {
+func NewSearchHandler(ss service.ISearchService) *SearchHandler {
 	return &SearchHandler{
-		as: as,
-		ms: ms,
+		ss: ss,
 	}
 }
 

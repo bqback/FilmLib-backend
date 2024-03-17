@@ -137,7 +137,7 @@ func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]
 	query, args, err := squirrel.
 		Select(movieInfoFields...).
 		From(movieTable).
-		LeftJoin(actorMovieJoinMovieOnMovieID).
+		LeftJoin(actorMovieOnMovieID).
 		Where(squirrel.Eq{actorMovieActorIDField: id.Value}).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
@@ -169,8 +169,8 @@ func (s *PgActorStorage) GetAll(ctx context.Context) ([]*entities.Actor, error) 
 	query, args, err := squirrel.
 		Select(actorGetAllFields...).
 		From(actorTable).
-		InnerJoin(actorJoinActorMovieOnActorID).
-		InnerJoin(movieJoinActorMovieOnMovieID).
+		InnerJoin(actorMovieOnActorID).
+		InnerJoin(movieOnMovieID).
 		GroupBy(actorIDField).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
@@ -183,12 +183,12 @@ func (s *PgActorStorage) GetAll(ctx context.Context) ([]*entities.Actor, error) 
 	var tempActors []dto.GetAllActor
 	if err := s.db.Select(&tempActors, query, args...); err != nil {
 		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
-		if err == sql.ErrNoRows {
-			return nil, apperrors.ErrEmptyResult
-		}
 		return nil, apperrors.ErrActorNotSelected
 	}
-	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
+	logger.DebugFmt("Select query executed", requestID, funcName, nodeName)
+	if len(tempActors) == 0 {
+		return nil, apperrors.ErrEmptyResult
+	}
 
 	actors := make([]*entities.Actor, len(tempActors))
 	for i, ta := range tempActors {
@@ -204,3 +204,51 @@ func (s *PgActorStorage) GetAll(ctx context.Context) ([]*entities.Actor, error) 
 
 	return actors, nil
 }
+
+// func (s *PgActorStorage) FindByName(ctx context.Context, search_term string) ([]*entities.Actor, error) {
+// 	logger, requestID, err := utils.GetLoggerAndID(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	funcName := "GetAllActors"
+
+// 	query, args, err := squirrel.
+// 		Select(actorGetAllFields...).
+// 		From(actorTable).
+// 		InnerJoin(actorMovieOnActorID).
+// 		InnerJoin(movieOnMovieID).
+// 		Where(squirrel.Like{actorNameField: "%" + search_term + "%"}).
+// 		GroupBy(actorIDField).
+// 		PlaceholderFormat(squirrel.Dollar).
+// 		ToSql()
+// 	if err != nil {
+// 		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+// 		return nil, apperrors.ErrCouldNotBuildQuery
+// 	}
+// 	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+// 	var tempActors []dto.GetAllActor
+// 	if err := s.db.Select(&tempActors, query, args...); err != nil {
+// 		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
+// 		if err == sql.ErrNoRows {
+// 			return nil, apperrors.ErrEmptyResult
+// 		}
+// 		return nil, apperrors.ErrActorNotSelected
+// 	}
+// 	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
+
+// 	actors := make([]*entities.Actor, len(tempActors))
+// 	for i, ta := range tempActors {
+// 		actor := &entities.Actor{
+// 			ID:        ta.ID,
+// 			Name:      ta.Name,
+// 			Gender:    ta.Gender,
+// 			BirthDate: ta.BirthDate,
+// 			Movies:    ta.Movies,
+// 		}
+// 		actors[i] = actor
+// 	}
+
+// 	return actors, nil
+// }

@@ -38,6 +38,26 @@ func GetIDParam(ctx context.Context) (uint64, error) {
 	return 0, apperrors.ErrURLParamMissing
 }
 
+func GetSortOpts(ctx context.Context) (dto.SortOptions, error) {
+	if ctx == nil {
+		return dto.SortOptions{}, apperrors.ErrNilContext
+	}
+	if opts, ok := ctx.Value(dto.SortOptionsKey).(dto.SortOptions); ok {
+		return opts, nil
+	}
+	return dto.SortOptions{}, apperrors.ErrSortOptionsMissing
+}
+
+func GetSearchQuery(ctx context.Context) (string, error) {
+	if ctx == nil {
+		return "", apperrors.ErrNilContext
+	}
+	if query, ok := ctx.Value(dto.SearchTermKey).(string); ok {
+		return query, nil
+	}
+	return "", apperrors.ErrSortOptionsMissing
+}
+
 func GetLoggerAndID(ctx context.Context) (logging.ILogger, string, error) {
 	logger, err := GetReqLogger(ctx)
 	if err != nil {

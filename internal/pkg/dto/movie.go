@@ -41,6 +41,15 @@ func (m *MovieInfoList) Scan(value interface{}) error {
 	}
 }
 
+type GetAllMovie struct {
+	ID          uint64
+	Title       string
+	Description string
+	ReleaseDate time.Time `db:"release_date"`
+	Rating      float32
+	Actors      ActorInfoList `json:"actors" db:"actors"`
+}
+
 type MovieID struct {
 	Value uint64
 }

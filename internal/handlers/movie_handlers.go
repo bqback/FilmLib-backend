@@ -193,8 +193,8 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 //
 // @Produce  json
 //
-// @Param sortType query uint true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
-// @Param sortOrder query uint false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
+// @Param sort query uint true "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)"
+// @Param order query uint false "Порядок сортировки (0 - возрастающий, 1 - убывающий)"
 //
 // @Success 200  {object}  []entities.Movie "Список фильмов"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -203,4 +203,26 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /movies/ [get]
 func (mh MovieHandler) GetMovies(w http.ResponseWriter, r *http.Request) {
+	funcName := "GetMovies"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	opts, err := utils.GetSortOpts(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	movies, err := mh.ms.GetMovies(rCtx, opts)
+	if closed := respondOnErr(err, movies, "No movies found", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
+	}
 }

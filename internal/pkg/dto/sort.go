@@ -1,17 +1,23 @@
 package dto
 
 type SortOptions struct {
-	Type  key
-	Order key
+	Type  int
+	Order int
 }
 
 const (
-	TitleSort key = iota
+	TitleSort int = iota
 	RatingSort
-	NameSort
+	ReleaseSort
 )
 
 const (
-	AscSort key = iota
+	AscSort int = iota
 	DescSort
 )
+
+var DefaultSort = map[int]int{
+	TitleSort:   AscSort,
+	RatingSort:  DescSort,
+	ReleaseSort: AscSort,
+}

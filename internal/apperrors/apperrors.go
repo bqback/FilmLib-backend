@@ -15,7 +15,8 @@ var (
 )
 
 var (
-	ErrRequestIDMissing = errors.New("request ID is missing from context")
+	ErrRequestIDMissing   = errors.New("request ID is missing from context")
+	ErrSortOptionsMissing = errors.New("sort options are missing from context")
 )
 
 var (

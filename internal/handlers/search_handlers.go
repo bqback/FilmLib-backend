@@ -1,13 +1,14 @@
 package handlers
 
 import (
+	"filmlib/internal/apperrors"
 	"filmlib/internal/service"
+	"filmlib/internal/utils"
 	"net/http"
 )
 
 type SearchHandler struct {
-	as service.IActorService
-	ms service.IMovieService
+	ss service.ISearchService
 }
 
 // @Summary Искать фильм
@@ -18,13 +19,35 @@ type SearchHandler struct {
 // @Accept  json
 // @Produce  json
 //
-// @Param searchQuery body string true "Поисковый запрос"
+// @Param query query string true "Поисковый запрос"
 //
-// @Success 200  {object}  entities.SearchResult "Список результатов"
+// @Success 200  {object}  []entities.Movie "Список результатов"
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
 //
-// @Router /movies/search/ [POST]
-func (sh SearchHandler) Search(w http.ResponseWriter, r *http.Request) {
+// @Router /search/movie/ [get]
+func (sh SearchHandler) SearchMovies(w http.ResponseWriter, r *http.Request) {
+	funcName := "SearchMovies"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	query, err := utils.GetSearchQuery(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Extracted search query", requestID, funcName, nodeName)
+
+	movies, err := sh.ss.FindMovies(rCtx, query)
+	if closed := respondOnErr(err, movies, "No movies found", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
+	}
 }

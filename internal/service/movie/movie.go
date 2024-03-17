@@ -46,3 +46,11 @@ func (s *MovieService) Read(ctx context.Context, id dto.MovieID) (*entities.Movi
 func (s *MovieService) Delete(ctx context.Context, id dto.MovieID) error {
 	return s.ms.Delete(ctx, id)
 }
+
+func (s *MovieService) GetMovies(ctx context.Context, opts dto.SortOptions) ([]*entities.Movie, error) {
+	movies, err := s.ms.GetMovies(ctx, opts)
+	if err != nil {
+		return nil, err
+	}
+	return movies, nil
+}

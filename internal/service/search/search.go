@@ -1,6 +1,10 @@
 package search
 
-import "filmlib/internal/storage"
+import (
+	"context"
+	"filmlib/internal/pkg/entities"
+	"filmlib/internal/storage"
+)
 
 type SearchService struct {
 	as storage.IActorStorage
@@ -12,4 +16,12 @@ func NewSearchService(actorStorage storage.IActorStorage, movieStorage storage.I
 		as: actorStorage,
 		ms: movieStorage,
 	}
+}
+
+func (s *SearchService) FindMovies(ctx context.Context, search_term string) ([]*entities.Movie, error) {
+	movies, err := s.ms.FindByString(ctx, search_term)
+	if err != nil {
+		return nil, err
+	}
+	return movies, nil
 }

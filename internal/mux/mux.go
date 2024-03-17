@@ -22,9 +22,10 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 	actorsSpecificUrl := actorsBaseUrl + "{id}/"
 
 	moviesBaseUrl := baseUrl + "movies/"
-	movieSortParams := moviesBaseUrl + "{type}/{order}/"
 	moviesSpecificUrl := moviesBaseUrl + "{id}/"
-	moviesSearchUrl := moviesBaseUrl + "search/"
+
+	searchBaseUrl := baseUrl + "search/"
+	searchMovieUrl := searchBaseUrl + "movies/"
 
 	swaggerUrl := "/swagger/*"
 
@@ -48,7 +49,7 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 		middleware.Auth,
 	))
 
-	mux.Handle("GET "+movieSortParams, middleware.Stack(
+	mux.Handle("GET "+moviesBaseUrl, middleware.Stack(
 		wrapHandleFunc(handlers.MovieHandler.GetMovies),
 		middleware.ExtractSortParams,
 	))
@@ -71,9 +72,9 @@ func SetupMux(handlers *handlers.Handlers, config *config.Config, logger *loggin
 		middleware.Auth,
 	))
 
-	mux.Handle("POST "+moviesSearchUrl, middleware.Stack(
-		wrapHandleFunc(handlers.SearchHandler.Search),
-		middleware.ExtractID,
+	mux.Handle("GET "+searchMovieUrl, middleware.Stack(
+		wrapHandleFunc(handlers.SearchHandler.SearchMovies),
+		middleware.ExtractQuery,
 		middleware.Auth,
 	))
 

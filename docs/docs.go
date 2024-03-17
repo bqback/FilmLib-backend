@@ -276,14 +276,14 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "description": "Тип сортировки (0 - название, 1 - рейтинг, 2 - дата выпуска)",
-                        "name": "sortType",
+                        "name": "sort",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "Порядок сортировки (0 - возрастающий, 1 - убывающий)",
-                        "name": "sortOrder",
+                        "name": "order",
                         "in": "query"
                     }
                 ],
@@ -344,58 +344,6 @@ const docTemplate = `{
                         "description": "Объект нового фильма",
                         "schema": {
                             "$ref": "#/definitions/entities.Movie"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/apperrors.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/movies/search/": {
-            "post": {
-                "description": "Поиск фильма по строке\nСтрока ищется в названии фильма и списке актёров",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "movies"
-                ],
-                "summary": "Искать фильм",
-                "parameters": [
-                    {
-                        "description": "Поисковый запрос",
-                        "name": "searchQuery",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Список результатов",
-                        "schema": {
-                            "$ref": "#/definitions/entities.SearchResult"
                         }
                     },
                     "400": {
@@ -545,6 +493,59 @@ const docTemplate = `{
                         "description": "no response",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/search/movie/": {
+            "get": {
+                "description": "Поиск фильма по строке\nСтрока ищется в названии фильма и списке актёров",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Искать фильм",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Поисковый запрос",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список результатов",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Movie"
+                            }
                         }
                     },
                     "400": {
@@ -733,23 +734,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "entities.SearchResult": {
-            "type": "object",
-            "properties": {
-                "actors": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Actor"
-                    }
-                },
-                "movies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entities.Movie"
-                    }
                 }
             }
         }

@@ -7,6 +7,7 @@ import (
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/pkg/entities"
 	"filmlib/internal/utils"
+	"fmt"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -20,6 +21,55 @@ func NewMovieStorage(db *sqlx.DB) *PgMovieStorage {
 	return &PgMovieStorage{
 		db: db,
 	}
+}
+
+func (s *PgMovieStorage) GetMovies(ctx context.Context, opts dto.SortOptions) ([]*entities.Movie, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "GetAllMovie"
+
+	query, args, err := squirrel.
+		Select(movieGetAllFields...).
+		From(movieTable).
+		InnerJoin(actorMovieOnMovieID).
+		InnerJoin(actorOnActorID).
+		GroupBy(movieIDField).
+		OrderBy(SortOptionsMap[opts.Type] + " " + SortOrderMap[opts.Order]).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+	var tempMovies []dto.GetAllMovie
+	if err := s.db.Select(&tempMovies, query, args...); err != nil {
+		logger.DebugFmt("Movie select failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrEmptyResult
+		}
+		return nil, apperrors.ErrMovieNotSelected
+	}
+	logger.DebugFmt("Movie selected", requestID, funcName, nodeName)
+
+	movies := make([]*entities.Movie, len(tempMovies))
+	for i, tm := range tempMovies {
+		movie := &entities.Movie{
+			ID:          tm.ID,
+			Title:       tm.Title,
+			Description: tm.Description,
+			ReleaseDate: tm.ReleaseDate,
+			Rating:      tm.Rating,
+			Actors:      tm.Actors,
+		}
+		movies[i] = movie
+	}
+
+	return movies, nil
 }
 
 func (s *PgMovieStorage) Create(ctx context.Context, info dto.NewMovie) (*entities.Movie, error) {
@@ -207,4 +257,59 @@ func (s *PgMovieStorage) GetMovieActors(ctx context.Context, id dto.MovieID) ([]
 	logger.DebugFmt("Movie actors selected", requestID, funcName, nodeName)
 
 	return actors, nil
+}
+
+func (s *PgMovieStorage) FindByString(ctx context.Context, search_term string) ([]*entities.Movie, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "FindByString"
+
+	query, args, err := squirrel.
+		Select(movieGetAllFields...).
+		From(movieTable).
+		InnerJoin(actorMovieOnMovieID).
+		InnerJoin(actorOnActorID).
+		Where(squirrel.Or{
+			squirrel.Like{tlMovieTitleField: "%" + search_term + "%"},
+			squirrel.Like{tlActorNameField: "%" + search_term + "%"},
+		}).
+		GroupBy(movieIDField).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+	logger.DebugFmt(query, requestID, funcName, nodeName)
+	logger.DebugFmt(fmt.Sprintf("%v", args), requestID, funcName, nodeName)
+
+	var tempMovies []dto.GetAllMovie
+	if err := s.db.Select(&tempMovies, query, args...); err != nil {
+		logger.DebugFmt("Movie select failed with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrMovieNotSelected
+	}
+	logger.DebugFmt("Select query executed", requestID, funcName, nodeName)
+	if len(tempMovies) == 0 {
+		return nil, apperrors.ErrEmptyResult
+	}
+
+	movies := make([]*entities.Movie, len(tempMovies))
+	for i, tm := range tempMovies {
+		movie := &entities.Movie{
+			ID:          tm.ID,
+			Title:       tm.Title,
+			Description: tm.Description,
+			ReleaseDate: tm.ReleaseDate,
+			Rating:      tm.Rating,
+			Actors:      tm.Actors,
+		}
+		movies[i] = movie
+	}
+
+	return movies, nil
 }

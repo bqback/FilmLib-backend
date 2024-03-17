@@ -15,7 +15,7 @@ type IActorService interface {
 }
 
 type IMovieService interface {
-	// GetMovies(context.Context, dto.SortOptions) ([]*entities.Movie, error)
+	GetMovies(context.Context, dto.SortOptions) ([]*entities.Movie, error)
 	Create(context.Context, dto.NewMovie) (*entities.Movie, error)
 	Read(context.Context, dto.MovieID) (*entities.Movie, error)
 	// Update(context.Context, dto.UpdatedMovie) (*entities.Movie, error)
@@ -23,5 +23,5 @@ type IMovieService interface {
 }
 
 type ISearchService interface {
-	// Search(context.Context, string) (*entities.Movie, error)
+	FindMovies(context.Context, string) ([]*entities.Movie, error)
 }

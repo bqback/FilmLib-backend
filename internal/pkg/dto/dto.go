@@ -1,6 +1,6 @@
 package dto
 
-type key int
+type Key int
 
 type ActorMovie struct {
 	Actor uint64 `db:"id_actor"`

@@ -1,10 +1,10 @@
 package dto
 
 const (
-	ErrorKey key = iota
+	ErrorKey Key = iota
 	LoggerKey
 	RequestIDKey
 	IDKey
-	SortTypeKey
-	SortOrderKey
+	SortOptionsKey
+	SearchTermKey
 )
