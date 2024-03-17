@@ -198,4 +198,17 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /actors/ [get]
 func (ah ActorHandler) GetActors(w http.ResponseWriter, r *http.Request) {
+	funcName := "GetActors"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	actors, err := ah.as.GetActors(rCtx)
+	if closed := respondOnErr(err, actors, "No actors found", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
+	}
 }

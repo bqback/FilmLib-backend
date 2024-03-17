@@ -137,7 +137,7 @@ func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]
 	query, args, err := squirrel.
 		Select(movieInfoFields...).
 		From(movieTable).
-		LeftJoin(actorMovieTable + " ON " + actorMovieMovieIDField + "=" + movieIDField).
+		LeftJoin(actorMovieJoinMovieOnMovieID).
 		Where(squirrel.Eq{actorMovieActorIDField: id.Value}).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
@@ -156,4 +156,51 @@ func (s *PgActorStorage) GetActorMovies(ctx context.Context, id dto.ActorID) ([]
 	logger.DebugFmt("Actor movies selected", requestID, funcName, nodeName)
 
 	return movies, nil
+}
+
+func (s *PgActorStorage) GetAll(ctx context.Context) ([]*entities.Actor, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "GetAllActors"
+
+	query, args, err := squirrel.
+		Select(actorGetAllFields...).
+		From(actorTable).
+		InnerJoin(actorJoinActorMovieOnActorID).
+		InnerJoin(movieJoinActorMovieOnMovieID).
+		GroupBy(actorIDField).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+
+	var tempActors []dto.GetAllActor
+	if err := s.db.Select(&tempActors, query, args...); err != nil {
+		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrEmptyResult
+		}
+		return nil, apperrors.ErrActorNotSelected
+	}
+	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
+
+	actors := make([]*entities.Actor, len(tempActors))
+	for i, ta := range tempActors {
+		actor := &entities.Actor{
+			ID:        ta.ID,
+			Name:      ta.Name,
+			Gender:    ta.Gender,
+			BirthDate: ta.BirthDate,
+			Movies:    ta.Movies,
+		}
+		actors[i] = actor
+	}
+
+	return actors, nil
 }

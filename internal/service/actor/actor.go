@@ -37,3 +37,11 @@ func (s *ActorService) Read(ctx context.Context, id dto.ActorID) (*entities.Acto
 func (s *ActorService) Delete(ctx context.Context, id dto.ActorID) error {
 	return s.as.Delete(ctx, id)
 }
+
+func (s *ActorService) GetActors(ctx context.Context) ([]*entities.Actor, error) {
+	actors, err := s.as.GetAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return actors, nil
+}

@@ -7,7 +7,7 @@ import (
 )
 
 type IActorStorage interface {
-	// GetAll(context.Context) ([]*entities.Actor, error)
+	GetAll(context.Context) ([]*entities.Actor, error)
 	Create(context.Context, dto.NewActor) (*entities.Actor, error)
 	Read(context.Context, dto.ActorID) (*entities.Actor, error)
 	// Update(context.Context, dto.UpdatedActor) (*entities.Actor, error)

@@ -1,6 +1,10 @@
 package dto
 
-import "time"
+import (
+	"encoding/json"
+	"errors"
+	"time"
+)
 
 type NewActor struct {
 	Name      string    `json:"name"`
@@ -18,6 +22,27 @@ type UpdatedActor struct {
 type ActorInfo struct {
 	ID   uint64 `json:"id"`
 	Name string `json:"name"`
+}
+
+type ActorInfoList []ActorInfo
+
+func (m *ActorInfoList) Scan(value interface{}) error {
+	switch value := value.(type) {
+	case []byte:
+		return json.Unmarshal(value, &m)
+	case nil:
+		return nil
+	default:
+		return errors.New("failed asserting value type")
+	}
+}
+
+type GetAllActor struct {
+	ID        uint64
+	Name      string
+	Gender    string
+	BirthDate time.Time     `db:"dob"`
+	Movies    MovieInfoList `json:"movies" db:"movies"`
 }
 
 type ActorID struct {
