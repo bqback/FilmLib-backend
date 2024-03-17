@@ -7,7 +7,6 @@ import (
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/pkg/entities"
 	"filmlib/internal/utils"
-	"fmt"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
@@ -267,8 +266,8 @@ func (s *PgMovieStorage) FindByString(ctx context.Context, search_term string) (
 
 	funcName := "FindByString"
 
-	query, args, err := squirrel.
-		Select(movieGetAllFields...).
+	matchQuery, args, err := squirrel.
+		Select(movieIDField).
 		From(movieTable).
 		InnerJoin(actorMovieOnMovieID).
 		InnerJoin(actorOnActorID).
@@ -279,17 +278,39 @@ func (s *PgMovieStorage) FindByString(ctx context.Context, search_term string) (
 		GroupBy(movieIDField).
 		PlaceholderFormat(squirrel.Dollar).
 		ToSql()
-
 	if err != nil {
 		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
 		return nil, apperrors.ErrCouldNotBuildQuery
 	}
 	logger.DebugFmt("Query built", requestID, funcName, nodeName)
-	logger.DebugFmt(query, requestID, funcName, nodeName)
-	logger.DebugFmt(fmt.Sprintf("%v", args), requestID, funcName, nodeName)
+
+	var matchIDs []int
+	if err := s.db.Select(&matchIDs, matchQuery, args...); err != nil {
+		logger.DebugFmt("Movie select failed with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrMovieNotSelected
+	}
+	logger.DebugFmt("Select query executed", requestID, funcName, nodeName)
+	if len(matchIDs) == 0 {
+		return nil, apperrors.ErrEmptyResult
+	}
+
+	movieQuery, args, err := squirrel.
+		Select(movieGetAllFields...).
+		From(movieTable).
+		InnerJoin(actorMovieOnMovieID).
+		InnerJoin(actorOnActorID).
+		Where(squirrel.Eq{movieIDField: matchIDs}).
+		GroupBy(movieIDField).
+		PlaceholderFormat(squirrel.Dollar).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
 
 	var tempMovies []dto.GetAllMovie
-	if err := s.db.Select(&tempMovies, query, args...); err != nil {
+	if err := s.db.Select(&tempMovies, movieQuery, args...); err != nil {
 		logger.DebugFmt("Movie select failed with error "+err.Error(), requestID, funcName, nodeName)
 		return nil, apperrors.ErrMovieNotSelected
 	}
