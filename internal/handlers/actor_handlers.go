@@ -15,7 +15,7 @@ type ActorHandler struct {
 
 // @Summary Создать актёра
 // @Description
-// @Tags actors
+// @Tags Актёры
 //
 // @Accept  json
 // @Produce  json
@@ -86,11 +86,11 @@ func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Получить данные об актёре
 // @Description Получить данные об актёре по его ID
-// @Tags actors
+// @Tags Актёры
 //
 // @Produce  json
 //
-// @Param actorID path uint true "ID актёра"
+// @Param id path uint true "ID актёра"
 //
 // @Success 200  {object}  entities.Actor "Объект актёра"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -127,12 +127,12 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Изменить данные об актёре
 // @Description Изменить данные об актёре по его ID
-// @Tags actors
+// @Tags Актёры
 //
 // @Accept  json
 // @Produce  json
 //
-// @Param actorID path uint true "ID актёра"
+// @Param id path uint true "ID актёра"
 // @Param actorData body dto.UpdatedActor true "Обновлённые данные актёра"
 //
 // @Success 204  {string}  "no response"
@@ -146,11 +146,11 @@ func (ah ActorHandler) UpdateActor(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Удалить данные об актёре
 // @Description Удалить данные об актёре по его ID
-// @Tags actors
+// @Tags Актёры
 //
 // @Produce  json
 //
-// @Param actorID path uint true "ID актёра"
+// @Param id path uint true "ID актёра"
 //
 // @Success 204  {string}  "no response"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -187,7 +187,7 @@ func (ah ActorHandler) DeleteActor(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Получить список актёров
 // @Description Получить список всех актёров
-// @Tags actors
+// @Tags Актёры
 //
 // @Produce  json
 //

@@ -149,7 +149,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Получить список актёров
       tags:
-      - actors
+      - Актёры
     post:
       consumes:
       - application/json
@@ -181,14 +181,14 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Создать актёра
       tags:
-      - actors
+      - Актёры
   /actors/{id}/:
     delete:
       description: Удалить данные об актёре по его ID
       parameters:
       - description: ID актёра
         in: path
-        name: actorID
+        name: id
         required: true
         type: integer
       produces:
@@ -212,13 +212,13 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Удалить данные об актёре
       tags:
-      - actors
+      - Актёры
     get:
       description: Получить данные об актёре по его ID
       parameters:
       - description: ID актёра
         in: path
-        name: actorID
+        name: id
         required: true
         type: integer
       produces:
@@ -242,7 +242,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Получить данные об актёре
       tags:
-      - actors
+      - Актёры
     patch:
       consumes:
       - application/json
@@ -250,7 +250,7 @@ paths:
       parameters:
       - description: ID актёра
         in: path
-        name: actorID
+        name: id
         required: true
         type: integer
       - description: Обновлённые данные актёра
@@ -280,7 +280,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Изменить данные об актёре
       tags:
-      - actors
+      - Актёры
   /movies/:
     get:
       description: |-
@@ -320,7 +320,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Получить список фильмов
       tags:
-      - movies
+      - Фильмы
     post:
       consumes:
       - application/json
@@ -352,14 +352,14 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Создать фильм
       tags:
-      - movies
+      - Фильмы
   /movies/{id}/:
     delete:
       description: Удалить данные об фильме по его ID
       parameters:
       - description: ID фильма
         in: path
-        name: movieID
+        name: id
         required: true
         type: integer
       produces:
@@ -383,13 +383,13 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Удалить данные об фильме
       tags:
-      - movies
+      - Фильмы
     get:
       description: Получить данные об фильме по его ID
       parameters:
       - description: ID фильма
         in: path
-        name: movieID
+        name: id
         required: true
         type: integer
       produces:
@@ -413,7 +413,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Получить данные об фильме
       tags:
-      - movies
+      - Фильмы
     patch:
       consumes:
       - application/json
@@ -421,7 +421,7 @@ paths:
       parameters:
       - description: ID фильма
         in: path
-        name: movieID
+        name: id
         required: true
         type: integer
       - description: Обновлённые данные фильма
@@ -451,7 +451,7 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Изменить данные об фильме
       tags:
-      - movies
+      - Фильмы
   /search/movie/:
     get:
       consumes:
@@ -488,5 +488,5 @@ paths:
             $ref: '#/definitions/apperrors.ErrorResponse'
       summary: Искать фильм
       tags:
-      - movies
+      - Поиск
 swagger: "2.0"

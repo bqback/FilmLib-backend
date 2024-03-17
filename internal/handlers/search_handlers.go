@@ -14,7 +14,7 @@ type SearchHandler struct {
 // @Summary Искать фильм
 // @Description Поиск фильма по строке
 // @Description Строка ищется в названии фильма и списке актёров
-// @Tags movies
+// @Tags Поиск
 //
 // @Accept  json
 // @Produce  json

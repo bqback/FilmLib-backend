@@ -15,7 +15,7 @@ type MovieHandler struct {
 
 // @Summary Создать фильм
 // @Description
-// @Tags movies
+// @Tags Фильмы
 //
 // @Accept  json
 // @Produce  json
@@ -86,11 +86,11 @@ func (mh MovieHandler) CreateMovie(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Получить данные об фильме
 // @Description Получить данные об фильме по его ID
-// @Tags movies
+// @Tags Фильмы
 //
 // @Produce  json
 //
-// @Param movieID path uint true "ID фильма"
+// @Param id path uint true "ID фильма"
 //
 // @Success 200  {object}  entities.Movie "Объект фильма"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -127,12 +127,12 @@ func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Изменить данные об фильме
 // @Description Изменить данные об фильме по его ID
-// @Tags movies
+// @Tags Фильмы
 //
 // @Accept  json
 // @Produce  json
 //
-// @Param movieID path uint true "ID фильма"
+// @Param id path uint true "ID фильма"
 // @Param movieData body dto.UpdatedMovie true "Обновлённые данные фильма"
 //
 // @Success 204  {string}  "no response"
@@ -146,11 +146,11 @@ func (mh MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
 
 // @Summary Удалить данные об фильме
 // @Description Удалить данные об фильме по его ID
-// @Tags movies
+// @Tags Фильмы
 //
 // @Produce  json
 //
-// @Param movieID path uint true "ID фильма"
+// @Param id path uint true "ID фильма"
 //
 // @Success 204  {string}  "no response"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -189,7 +189,7 @@ func (mh MovieHandler) DeleteMovie(w http.ResponseWriter, r *http.Request) {
 // @Description Получить список всех фильмов
 // @Description Если порядок сортировки не указан, для каждого типа есть порядок по умолчанию:
 // @Description Для названия и даты возрастающий, для рейтинга - убывающий
-// @Tags movies
+// @Tags Фильмы
 //
 // @Produce  json
 //

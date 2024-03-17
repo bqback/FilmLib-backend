@@ -30,7 +30,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "actors"
+                    "Актёры"
                 ],
                 "summary": "Получить список актёров",
                 "responses": {
@@ -71,7 +71,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "actors"
+                    "Актёры"
                 ],
                 "summary": "Создать актёра",
                 "parameters": [
@@ -120,14 +120,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "actors"
+                    "Актёры"
                 ],
                 "summary": "Получить данные об актёре",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID актёра",
-                        "name": "actorID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -165,14 +165,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "actors"
+                    "Актёры"
                 ],
                 "summary": "Удалить данные об актёре",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID актёра",
-                        "name": "actorID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -213,14 +213,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "actors"
+                    "Актёры"
                 ],
                 "summary": "Изменить данные об актёре",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID актёра",
-                        "name": "actorID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -269,7 +269,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Фильмы"
                 ],
                 "summary": "Получить список фильмов",
                 "parameters": [
@@ -325,7 +325,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Фильмы"
                 ],
                 "summary": "Создать фильм",
                 "parameters": [
@@ -374,14 +374,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Фильмы"
                 ],
                 "summary": "Получить данные об фильме",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID фильма",
-                        "name": "movieID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -419,14 +419,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Фильмы"
                 ],
                 "summary": "Удалить данные об фильме",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID фильма",
-                        "name": "movieID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -467,14 +467,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Фильмы"
                 ],
                 "summary": "Изменить данные об фильме",
                 "parameters": [
                     {
                         "type": "integer",
                         "description": "ID фильма",
-                        "name": "movieID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -526,7 +526,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "movies"
+                    "Поиск"
                 ],
                 "summary": "Искать фильм",
                 "parameters": [
