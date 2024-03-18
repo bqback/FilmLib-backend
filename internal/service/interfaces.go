@@ -10,7 +10,7 @@ type IActorService interface {
 	GetActors(context.Context) ([]*entities.Actor, error)
 	Create(context.Context, dto.NewActor) (*entities.Actor, error)
 	Read(context.Context, dto.ActorID) (*entities.Actor, error)
-	// Update(context.Context, dto.UpdatedActor) (*entities.Actor, error)
+	Update(context.Context, dto.UpdatedActor) (*entities.Actor, error)
 	Delete(context.Context, dto.ActorID) error
 }
 

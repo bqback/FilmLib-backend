@@ -5,6 +5,7 @@ import (
 	"filmlib/internal/apperrors"
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/service"
+	"filmlib/internal/storage/postgresql"
 	"filmlib/internal/utils"
 	"net/http"
 )
@@ -126,14 +127,15 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 }
 
 // @Summary Изменить данные об актёре
-// @Description Изменить данные об актёре по его ID
+// @Description Изменить данные об актёре по его ID.
+// @Description Принимается любой набор параметров, но обязателен хотя бы один из них.
 // @Tags Актёры
 //
 // @Accept  json
 // @Produce  json
 //
 // @Param id path uint true "ID актёра"
-// @Param actorData body dto.UpdatedActor true "Обновлённые данные актёра"
+// @Param actorData body dto.ExpectedActorUpdate true "Обновлённые данные актёра"
 //
 // @Success 204  {string}  "no response"
 // @Failure 400  {object}  apperrors.ErrorResponse
@@ -142,6 +144,45 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 //
 // @Router /actors/{id}/ [patch]
 func (ah ActorHandler) UpdateActor(w http.ResponseWriter, r *http.Request) {
+	funcName := "UpdateActor"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Extracted actor ID", requestID, funcName, nodeName)
+
+	var updatedActor dto.UpdatedActor
+	var updateValues map[string]interface{}
+	err = json.NewDecoder(r.Body).Decode(&updateValues)
+	if err != nil {
+		logger.DebugFmt("Failed to decode request: "+err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+	ok := postgresql.ValidateActorUpdate(updateValues)
+	if !ok {
+		logger.DebugFmt("Invalid update data", requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+	updatedActor.ID = id
+	updatedActor.Values = updateValues
+
+	actor, err := ah.as.Update(rCtx, updatedActor)
+	if closed := respondOnErr(err, actor, "No actor found with that ID", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
+	}
 }
 
 // @Summary Удалить данные об актёре

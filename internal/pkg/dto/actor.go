@@ -12,11 +12,18 @@ type NewActor struct {
 	BirthDate time.Time `json:"dob" validate:"datetime"`
 }
 
+type ExpectedActorUpdate struct {
+	Name      *string    `json:"name,omitempty" validate:"required_without_all=Gender BirthDate"`
+	Gender    *string    `json:"gender,omitempty" validate:"oneof=male female other,required_without_all=Name BirthDate"`
+	BirthDate *time.Time `json:"dob,omitempty"  validate:"datetime,required_without_all=Name Gender"`
+}
+
 type UpdatedActor struct {
-	ID        uint64    `json:"-"`
-	Name      string    `json:"name,omitempty" validate:"required_without_all=Gender BirthDate"`
-	Gender    string    `json:"gender,omitempty" validate:"oneof=male female other,required_without_all=Name BirthDate"`
-	BirthDate time.Time `json:"dob,omitempty"  validate:"datetime,required_without_all=Name Gender"`
+	ID     uint64
+	Values map[string]interface{}
+	// Name      *string    `json:"name,omitempty" validate:"required_without_all=Gender BirthDate"`
+	// Gender    *string    `json:"gender,omitempty" validate:"oneof=male female other,required_without_all=Name BirthDate"`
+	// BirthDate *time.Time `json:"dob,omitempty"  validate:"datetime,required_without_all=Name Gender"`
 }
 
 type ActorInfo struct {

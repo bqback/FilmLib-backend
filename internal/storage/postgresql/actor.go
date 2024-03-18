@@ -95,6 +95,55 @@ func (s *PgActorStorage) Read(ctx context.Context, id dto.ActorID) (*entities.Ac
 	return &actor, nil
 }
 
+func (s *PgActorStorage) Update(ctx context.Context, info dto.UpdatedActor) (*entities.Actor, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "UpdateActor"
+
+	// Черновой вариант на трудный день
+	// updateBase := squirrel.Update(actorTable)
+	// map[string]interface{} проще, но как будто опаснее
+	// values := reflect.ValueOf(info)
+	// types := values.Type()
+	// for i := 1; i < values.NumField(); i++ {
+	// 	if !values.Field(i).IsNil() {
+	// 		updateBase = updateBase.Set(actorUpdateStructToField[types.Field(i).Name], values.Field(i).)
+	// 	}
+	// }
+
+	// query, args, err := updateBase.
+	// 	Where(squirrel.Eq{actorIDField: info.ID}).
+	// 	PlaceholderFormat(squirrel.Dollar).
+	// 	ToSql()
+	query, args, err := squirrel.Update(actorTable).
+		SetMap(info.Values).
+		Where(squirrel.Eq{actorIDField: info.ID}).
+		PlaceholderFormat(squirrel.Dollar).
+		Suffix(actorUpdateReturnSuffix).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+	logger.DebugFmt(query, requestID, funcName, nodeName)
+
+	var actor entities.Actor
+	if err := s.db.Get(&actor, query, args...); err != nil {
+		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrEmptyResult
+		}
+		return nil, apperrors.ErrActorNotSelected
+	}
+	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
+
+	return &actor, nil
+}
+
 func (s *PgActorStorage) Delete(ctx context.Context, id dto.ActorID) error {
 	logger, requestID, err := utils.GetLoggerAndID(ctx)
 	if err != nil {

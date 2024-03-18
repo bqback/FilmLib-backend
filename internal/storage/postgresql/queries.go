@@ -1,6 +1,12 @@
 package postgresql
 
-import "filmlib/internal/pkg/dto"
+import (
+	"filmlib/internal/pkg/dto"
+	"slices"
+	"strings"
+)
+
+var shortIDField = "id"
 
 var (
 	actorTable          = "public.actor"
@@ -10,6 +16,25 @@ var (
 	actorGenderField    = "public.actor.gender"
 	actorBirthDateField = "public.actor.dob"
 )
+
+var (
+	actorShortNameField      = "name"
+	actorShortGenderField    = "gender"
+	actorShortBirthDateField = "dob"
+	ActorShortFields         = []string{actorShortNameField, actorShortGenderField, actorShortBirthDateField}
+)
+
+func ValidateActorUpdate(values map[string]interface{}) bool {
+	if len(values) == 0 {
+		return false
+	}
+	for key := range values {
+		if !slices.Contains(ActorShortFields, key) {
+			return false
+		}
+	}
+	return true
+}
 
 var (
 	movieTable            = "public.movie"
@@ -28,19 +53,21 @@ var (
 )
 
 var (
-	allActorInsertFields = []string{"name", "gender", "dob"}
-	allActorSelectFields = []string{"id", "name", "gender", "dob"}
-	actorInfoFields      = []string{"id", "name"}
+	allActorInsertFields = []string{actorShortNameField, actorShortGenderField, actorShortBirthDateField}
+	allActorSelectFields = []string{shortIDField, actorShortNameField, actorShortGenderField, actorShortBirthDateField}
+	actorInfoFields      = []string{shortIDField, actorShortNameField}
 	actorGetAllFields    = []string{actorIDField, actorNameField, actorGenderField, actorBirthDateField,
 		"jsonb_agg(jsonb_build_object( " +
 			"'id'," + movieIDField + ",'title'," + movieTitleField + ")) movies",
 	}
 )
 
+var actorUpdateReturnSuffix = "RETURNING " + strings.Join(allActorSelectFields, ", ")
+
 var (
 	allMovieInsertFields = []string{"title", "description", "release_date", "rating"}
-	movieInfoFields      = []string{"id", "title"}
-	allMovieSelectFields = []string{"id", "title", "description", "release_date", "rating"}
+	movieInfoFields      = []string{shortIDField, "title"}
+	allMovieSelectFields = []string{shortIDField, "title", "description", "release_date", "rating"}
 	movieGetAllFields    = []string{movieIDField, movieTitleField, movieDescriptionField, movieReleaseField, movieRatingField,
 		"jsonb_agg(jsonb_build_object( " +
 			"'id'," + actorIDField + ",'name'," + actorNameField + ")) actors",
@@ -68,3 +95,9 @@ var SortOrderMap = map[int]string{
 	dto.AscSort:  "ASC",
 	dto.DescSort: "DESC",
 }
+
+// var actorUpdateStructToField = map[string]string{
+// 	"Name":      actorShortNameField,
+// 	"Gender":    actorShortGenderField,
+// 	"BirthDate": actorBirthDateField,
+// }

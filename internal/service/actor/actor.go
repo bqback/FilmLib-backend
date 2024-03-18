@@ -34,6 +34,19 @@ func (s *ActorService) Read(ctx context.Context, id dto.ActorID) (*entities.Acto
 	return actor, nil
 }
 
+func (s *ActorService) Update(ctx context.Context, info dto.UpdatedActor) (*entities.Actor, error) {
+	actor, err := s.as.Update(ctx, info)
+	if err != nil {
+		return nil, err
+	}
+	movies, err := s.as.GetActorMovies(ctx, dto.ActorID{Value: actor.ID})
+	if err != nil {
+		return nil, err
+	}
+	actor.Movies = movies
+	return actor, nil
+}
+
 func (s *ActorService) Delete(ctx context.Context, id dto.ActorID) error {
 	return s.as.Delete(ctx, id)
 }
