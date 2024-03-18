@@ -93,7 +93,10 @@ var UnauthorizedResponse = ErrorResponse{
 }
 
 func ReturnError(err ErrorResponse, w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	w.WriteHeader(err.Code)
-	_, _ = w.Write([]byte(err.Message))
-	r.Body.Close()
+	_, writeErr := w.Write([]byte(err.Message))
+	if writeErr != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

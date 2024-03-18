@@ -97,7 +97,12 @@ func respondOnErr(
 		}
 	case apperrors.ErrEmptyResult:
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(emptyResponse))
+		_, err = w.Write([]byte(emptyResponse))
+		if err != nil {
+			logger.Error("Failed to return response: " + err.Error())
+			apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+			closed = true
+		}
 	default:
 		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
 		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
