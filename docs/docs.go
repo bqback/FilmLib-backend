@@ -205,7 +205,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Изменить данные об актёре по его ID",
+                "description": "Изменить данные об актёре по его ID.\nПринимается любой набор параметров, но обязателен хотя бы один из них.",
                 "consumes": [
                     "application/json"
                 ],
@@ -230,15 +230,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdatedActor"
+                            "$ref": "#/definitions/dto.ExpectedActorUpdate"
                         }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "no response",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/entities.Actor"
                         }
                     },
                     "400": {
@@ -484,15 +484,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.UpdatedMovie"
+                            "$ref": "#/definitions/dto.ExpectedMovieUpdate"
                         }
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "no response",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/entities.Movie"
                         }
                     },
                     "400": {
@@ -593,6 +593,48 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.ExpectedActorUpdate": {
+            "type": "object",
+            "properties": {
+                "dob": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "other"
+                    ]
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ExpectedMovieUpdate": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "movie_actors": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "release_date": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.MovieInfo": {
             "type": "object",
             "properties": {
@@ -624,48 +666,6 @@ const docTemplate = `{
             }
         },
         "dto.NewMovie": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "movie_actors": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "rating": {
-                    "type": "number"
-                },
-                "release_date": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdatedActor": {
-            "type": "object",
-            "properties": {
-                "dob": {
-                    "type": "string"
-                },
-                "gender": {
-                    "type": "string",
-                    "enum": [
-                        "male",
-                        "female",
-                        "other"
-                    ]
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.UpdatedMovie": {
             "type": "object",
             "properties": {
                 "description": {

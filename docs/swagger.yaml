@@ -14,6 +14,34 @@ definitions:
       name:
         type: string
     type: object
+  dto.ExpectedActorUpdate:
+    properties:
+      dob:
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        - other
+        type: string
+      name:
+        type: string
+    type: object
+  dto.ExpectedMovieUpdate:
+    properties:
+      description:
+        type: string
+      movie_actors:
+        items:
+          type: integer
+        type: array
+      rating:
+        type: number
+      release_date:
+        type: string
+      title:
+        type: string
+    type: object
   dto.MovieInfo:
     properties:
       id:
@@ -35,34 +63,6 @@ definitions:
         type: string
     type: object
   dto.NewMovie:
-    properties:
-      description:
-        type: string
-      movie_actors:
-        items:
-          type: integer
-        type: array
-      rating:
-        type: number
-      release_date:
-        type: string
-      title:
-        type: string
-    type: object
-  dto.UpdatedActor:
-    properties:
-      dob:
-        type: string
-      gender:
-        enum:
-        - male
-        - female
-        - other
-        type: string
-      name:
-        type: string
-    type: object
-  dto.UpdatedMovie:
     properties:
       description:
         type: string
@@ -246,7 +246,9 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Изменить данные об актёре по его ID
+      description: |-
+        Изменить данные об актёре по его ID.
+        Принимается любой набор параметров, но обязателен хотя бы один из них.
       parameters:
       - description: ID актёра
         in: path
@@ -258,14 +260,14 @@ paths:
         name: actorData
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdatedActor'
+          $ref: '#/definitions/dto.ExpectedActorUpdate'
       produces:
       - application/json
       responses:
-        "204":
-          description: no response
+        "200":
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/entities.Actor'
         "400":
           description: Bad Request
           schema:
@@ -429,14 +431,14 @@ paths:
         name: movieData
         required: true
         schema:
-          $ref: '#/definitions/dto.UpdatedMovie'
+          $ref: '#/definitions/dto.ExpectedMovieUpdate'
       produces:
       - application/json
       responses:
-        "204":
-          description: no response
+        "200":
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/entities.Movie'
         "400":
           description: Bad Request
           schema:
