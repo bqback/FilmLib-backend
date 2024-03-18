@@ -5,6 +5,7 @@ import (
 	"filmlib/internal/apperrors"
 	"filmlib/internal/pkg/dto"
 	"filmlib/internal/service"
+	"filmlib/internal/storage/postgresql"
 	"filmlib/internal/utils"
 	"net/http"
 )
@@ -133,15 +134,54 @@ func (mh MovieHandler) ReadMovie(w http.ResponseWriter, r *http.Request) {
 // @Produce  json
 //
 // @Param id path uint true "ID фильма"
-// @Param movieData body dto.UpdatedMovie true "Обновлённые данные фильма"
+// @Param movieData body dto.ExpectedMovieUpdate true "Обновлённые данные фильма"
 //
-// @Success 204  {string}  "no response"
+// @Success 200  {object}  entities.Movie
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse
 //
 // @Router /movies/{id}/ [patch]
 func (mh MovieHandler) UpdateMovie(w http.ResponseWriter, r *http.Request) {
+	funcName := "UpdateMovie"
+
+	rCtx := r.Context()
+	logger, requestID, err := utils.GetLoggerAndID(rCtx)
+	if err != nil {
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+
+	id, err := utils.GetIDParam(rCtx)
+	if err != nil {
+		logger.DebugFmt(err.Error(), requestID, funcName, nodeName)
+		logger.Error(err.Error())
+		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
+		return
+	}
+	logger.DebugFmt("Extracted movie ID", requestID, funcName, nodeName)
+
+	var updatedMovie dto.UpdatedMovie
+	var updateValues map[string]interface{}
+	err = json.NewDecoder(r.Body).Decode(&updateValues)
+	if err != nil {
+		logger.DebugFmt("Failed to decode request: "+err.Error(), requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+	ok := postgresql.ValidateMovieUpdate(updateValues)
+	if !ok {
+		logger.DebugFmt("Invalid update data", requestID, funcName, nodeName)
+		apperrors.ReturnError(apperrors.BadRequestResponse, w, r)
+		return
+	}
+	updatedMovie.ID = id
+	updatedMovie.Values = updateValues
+
+	movie, err := mh.ms.Update(rCtx, updatedMovie)
+	if closed := respondOnErr(err, movie, "No movie found with that ID", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
+	}
 }
 
 // @Summary Удалить данные об фильме

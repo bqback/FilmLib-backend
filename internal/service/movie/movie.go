@@ -43,6 +43,19 @@ func (s *MovieService) Read(ctx context.Context, id dto.MovieID) (*entities.Movi
 	return movie, nil
 }
 
+func (s *MovieService) Update(ctx context.Context, info dto.UpdatedMovie) (*entities.Movie, error) {
+	movie, err := s.ms.Update(ctx, info)
+	if err != nil {
+		return nil, err
+	}
+	actors, err := s.ms.GetMovieActors(ctx, dto.MovieID{Value: movie.ID})
+	if err != nil {
+		return nil, err
+	}
+	movie.Actors = actors
+	return movie, nil
+}
+
 func (s *MovieService) Delete(ctx context.Context, id dto.MovieID) error {
 	return s.ms.Delete(ctx, id)
 }

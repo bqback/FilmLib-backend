@@ -21,7 +21,7 @@ var (
 	actorShortNameField      = "name"
 	actorShortGenderField    = "gender"
 	actorShortBirthDateField = "dob"
-	ActorShortFields         = []string{actorShortNameField, actorShortGenderField, actorShortBirthDateField}
+	actorShortFields         = []string{actorShortNameField, actorShortGenderField, actorShortBirthDateField}
 )
 
 func ValidateActorUpdate(values map[string]interface{}) bool {
@@ -29,7 +29,27 @@ func ValidateActorUpdate(values map[string]interface{}) bool {
 		return false
 	}
 	for key := range values {
-		if !slices.Contains(ActorShortFields, key) {
+		if !slices.Contains(actorShortFields, key) {
+			return false
+		}
+	}
+	return true
+}
+
+var (
+	movieShortTitleField       = "title"
+	movieShortDescriptionField = "description"
+	movieShortReleaseDateField = "release"
+	movieShortRatingField      = "rating"
+	movieShortFields           = []string{movieShortTitleField, movieShortDescriptionField, movieShortReleaseDateField, movieShortRatingField}
+)
+
+func ValidateMovieUpdate(values map[string]interface{}) bool {
+	if len(values) == 0 {
+		return false
+	}
+	for key := range values {
+		if !slices.Contains(movieShortFields, key) {
 			return false
 		}
 	}
@@ -73,6 +93,8 @@ var (
 			"'id'," + actorIDField + ",'name'," + actorNameField + ")) actors",
 	}
 )
+
+var movieUpdateReturnSuffix = "RETURNING " + strings.Join(allMovieSelectFields, ", ")
 
 var (
 	actorMovieOnActorID = actorMovieTable + " ON " + actorIDField + " = " + actorMovieActorIDField

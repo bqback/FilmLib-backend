@@ -43,12 +43,14 @@ var (
 var (
 	ErrActorNotCreated  = errors.New("failed to insert actor into database")
 	ErrActorNotSelected = errors.New("failed to select actor from database")
+	ErrActorNotUpdated  = errors.New("failed to update actor in database")
 	ErrActorNotDeleted  = errors.New("failed to delete actor from database")
 )
 
 var (
 	ErrMovieNotCreated  = errors.New("failed to insert movie into database")
 	ErrMovieNotSelected = errors.New("failed to select movie from database")
+	ErrMovieNotUpdated  = errors.New("failed to update movie in database")
 	ErrMovieNotDeleted  = errors.New("failed to delete movie from database")
 )
 
@@ -74,15 +76,7 @@ var InternalServerErrorResponse = ErrorResponse{
 }
 
 func ReturnError(err ErrorResponse, w http.ResponseWriter, r *http.Request) {
-	// rCtx := r.Context()
-	// logger := *utils.GetReqLogger(rCtx)
-	// requestID := chimw.GetReqID(rCtx)
-	// funcName := "ReturnError"
-
 	w.WriteHeader(err.Code)
-	// logger.DebugFmt(fmt.Sprintf("Wrote error code %v", err.Code), requestID, funcName, nodeName)
 	_, _ = w.Write([]byte(err.Message))
-	// logger.DebugFmt(fmt.Sprintf("Wrote message %v", err.Code), requestID, funcName, nodeName)
 	r.Body.Close()
-	// logger.DebugFmt("Request body closed", requestID, funcName, nodeName)
 }

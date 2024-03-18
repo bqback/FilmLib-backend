@@ -195,6 +195,41 @@ func (s *PgMovieStorage) Read(ctx context.Context, id dto.MovieID) (*entities.Mo
 	return &movie, nil
 }
 
+func (s *PgMovieStorage) Update(ctx context.Context, info dto.UpdatedMovie) (*entities.Movie, error) {
+	logger, requestID, err := utils.GetLoggerAndID(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	funcName := "UpdateMovie"
+
+	query, args, err := squirrel.
+		Update(movieTable).
+		SetMap(info.Values).
+		Where(squirrel.Eq{movieIDField: info.ID}).
+		PlaceholderFormat(squirrel.Dollar).
+		Suffix(movieUpdateReturnSuffix).
+		ToSql()
+	if err != nil {
+		logger.DebugFmt("Failed to build query with error "+err.Error(), requestID, funcName, nodeName)
+		return nil, apperrors.ErrCouldNotBuildQuery
+	}
+	logger.DebugFmt("Query built", requestID, funcName, nodeName)
+	logger.DebugFmt(query, requestID, funcName, nodeName)
+
+	var movie entities.Movie
+	if err := s.db.Get(&movie, query, args...); err != nil {
+		logger.DebugFmt("Movie update failed with error "+err.Error(), requestID, funcName, nodeName)
+		if err == sql.ErrNoRows {
+			return nil, apperrors.ErrEmptyResult
+		}
+		return nil, apperrors.ErrMovieNotUpdated
+	}
+	logger.DebugFmt("Movie updated", requestID, funcName, nodeName)
+
+	return &movie, nil
+}
+
 func (s *PgMovieStorage) Delete(ctx context.Context, id dto.MovieID) error {
 	logger, requestID, err := utils.GetLoggerAndID(ctx)
 	if err != nil {

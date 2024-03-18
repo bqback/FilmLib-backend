@@ -118,7 +118,8 @@ func (s *PgActorStorage) Update(ctx context.Context, info dto.UpdatedActor) (*en
 	// 	Where(squirrel.Eq{actorIDField: info.ID}).
 	// 	PlaceholderFormat(squirrel.Dollar).
 	// 	ToSql()
-	query, args, err := squirrel.Update(actorTable).
+	query, args, err := squirrel.
+		Update(actorTable).
 		SetMap(info.Values).
 		Where(squirrel.Eq{actorIDField: info.ID}).
 		PlaceholderFormat(squirrel.Dollar).
@@ -133,13 +134,13 @@ func (s *PgActorStorage) Update(ctx context.Context, info dto.UpdatedActor) (*en
 
 	var actor entities.Actor
 	if err := s.db.Get(&actor, query, args...); err != nil {
-		logger.DebugFmt("Actor select failed with error "+err.Error(), requestID, funcName, nodeName)
+		logger.DebugFmt("Actor update failed with error "+err.Error(), requestID, funcName, nodeName)
 		if err == sql.ErrNoRows {
 			return nil, apperrors.ErrEmptyResult
 		}
-		return nil, apperrors.ErrActorNotSelected
+		return nil, apperrors.ErrActorNotUpdated
 	}
-	logger.DebugFmt("Actor selected", requestID, funcName, nodeName)
+	logger.DebugFmt("Actor updated", requestID, funcName, nodeName)
 
 	return &actor, nil
 }

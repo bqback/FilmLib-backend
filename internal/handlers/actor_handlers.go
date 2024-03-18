@@ -137,7 +137,7 @@ func (ah ActorHandler) ReadActor(w http.ResponseWriter, r *http.Request) {
 // @Param id path uint true "ID актёра"
 // @Param actorData body dto.ExpectedActorUpdate true "Обновлённые данные актёра"
 //
-// @Success 204  {string}  "no response"
+// @Success 200  {object}  entities.Actor
 // @Failure 400  {object}  apperrors.ErrorResponse
 // @Failure 401  {object}  apperrors.ErrorResponse
 // @Failure 500  {object}  apperrors.ErrorResponse

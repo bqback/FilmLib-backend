@@ -14,13 +14,17 @@ type NewMovie struct {
 	Actors      []uint64  `json:"movie_actors" db:"-"`
 }
 
-type UpdatedMovie struct {
-	ID          uint64    `json:"-"`
+type ExpectedMovieUpdate struct {
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	ReleaseDate time.Time `json:"release_date" db:"release_date"`
 	Rating      float32   `json:"rating"`
 	Actors      []uint64  `json:"movie_actors" db:"-"`
+}
+
+type UpdatedMovie struct {
+	ID     uint64
+	Values map[string]interface{}
 }
 
 type MovieInfo struct {
