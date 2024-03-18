@@ -12,6 +12,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.3
+	github.com/zhashkevych/go-sqlxmock v1.5.1
 	golang.org/x/crypto v0.19.0
 	gopkg.in/yaml.v3 v3.0.1
 )

@@ -105,3 +105,15 @@ func (l *LogrusLogger) Printf(message string, args ...interface{}) {
 func (l *LogrusLogger) Level() int {
 	return l.level
 }
+
+func BasicTestLogger() ILogger {
+	logger, _ := NewLogrusLogger(&config.LoggingConfig{
+		Level:                  "info",
+		DisableTimestamp:       false,
+		FullTimestamp:          true,
+		LevelBasedReport:       true,
+		DisableLevelTruncation: true,
+		ReportCaller:           true,
+	})
+	return &logger
+}
