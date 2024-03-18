@@ -13,6 +13,7 @@ type Handlers struct {
 	ActorHandler
 	MovieHandler
 	SearchHandler
+	AuthHandler
 }
 
 // var validate = validator.New(validator.WithRequiredStructEnabled())
@@ -26,6 +27,7 @@ func NewHandlers(services *service.Services, config *config.Config) *Handlers {
 		ActorHandler:  *NewActorHandler(services.Actor),
 		MovieHandler:  *NewMovieHandler(services.Movie),
 		SearchHandler: *NewSearchHandler(services.Search),
+		AuthHandler:   *NewAuthHandler(services.Auth),
 	}
 }
 
@@ -45,11 +47,19 @@ func NewActorHandler(as service.IActorService) *ActorHandler {
 	}
 }
 
-// NewScanHandler
-// возвращает ScanHandler с необходимыми сервисами
+// NewSearchHandler
+// возвращает SearchHandler с необходимыми сервисами
 func NewSearchHandler(ss service.ISearchService) *SearchHandler {
 	return &SearchHandler{
 		ss: ss,
+	}
+}
+
+// NewAuthHandler
+// возвращает AuthHandler с необходимыми сервисами
+func NewAuthHandler(as service.IAuthService) *AuthHandler {
+	return &AuthHandler{
+		as: as,
 	}
 }
 

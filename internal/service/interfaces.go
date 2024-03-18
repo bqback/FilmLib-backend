@@ -25,3 +25,7 @@ type IMovieService interface {
 type ISearchService interface {
 	FindMovies(context.Context, string) ([]*entities.Movie, error)
 }
+
+type IAuthService interface {
+	Authenticate(context.Context, dto.LoginInfo) (*dto.JWT, error)
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"filmlib/internal/auth"
 	"filmlib/internal/config"
 	"filmlib/internal/handlers"
 	"filmlib/internal/logging"
@@ -55,10 +56,12 @@ func main() {
 	defer dbConnection.Close()
 	logger.Info("Database connection established")
 
+	authManager := auth.NewManager(config.JWT)
+
 	storages := storage.NewPostgresStorages(dbConnection)
 	logger.Info("Storages configured")
 
-	services := service.NewServices(storages)
+	services := service.NewServices(storages, authManager)
 	logger.Info("Services configured")
 
 	handlers := handlers.NewHandlers(services, config)

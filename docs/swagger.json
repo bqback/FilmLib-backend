@@ -256,6 +256,57 @@
                 }
             }
         },
+        "/auth/": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Авторизация"
+                ],
+                "summary": "Авторизоваться",
+                "parameters": [
+                    {
+                        "description": "Данные для авторизации",
+                        "name": "actorData",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "JWT-токен для ",
+                        "schema": {
+                            "$ref": "#/definitions/dto.JWT"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apperrors.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/movies/": {
             "get": {
                 "description": "Получить список всех фильмов\nЕсли порядок сортировки не указан, для каждого типа есть порядок по умолчанию:\nДля названия и даты возрастающий, для рейтинга - убывающий",
@@ -625,6 +676,25 @@
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.JWT": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginInfo": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }

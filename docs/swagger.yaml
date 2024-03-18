@@ -42,6 +42,18 @@ definitions:
       title:
         type: string
     type: object
+  dto.JWT:
+    properties:
+      token:
+        type: string
+    type: object
+  dto.LoginInfo:
+    properties:
+      login:
+        type: string
+      password:
+        type: string
+    type: object
   dto.MovieInfo:
     properties:
       id:
@@ -283,6 +295,39 @@ paths:
       summary: Изменить данные об актёре
       tags:
       - Актёры
+  /auth/:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные для авторизации
+        in: body
+        name: actorData
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'JWT-токен для '
+          schema:
+            $ref: '#/definitions/dto.JWT'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apperrors.ErrorResponse'
+      summary: Авторизоваться
+      tags:
+      - Авторизация
   /movies/:
     get:
       description: |-

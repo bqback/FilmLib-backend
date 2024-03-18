@@ -8,6 +8,7 @@ import (
 
 var shortIDField = "id"
 
+// public.actor fields
 var (
 	actorTable          = "public.actor"
 	actorIDField        = "public.actor.id"
@@ -17,6 +18,7 @@ var (
 	actorBirthDateField = "public.actor.dob"
 )
 
+// actor fields as is
 var (
 	actorShortNameField      = "name"
 	actorShortGenderField    = "gender"
@@ -36,6 +38,7 @@ func ValidateActorUpdate(values map[string]interface{}) bool {
 	return true
 }
 
+// movie fields as is
 var (
 	movieShortTitleField       = "title"
 	movieShortDescriptionField = "description"
@@ -56,6 +59,7 @@ func ValidateMovieUpdate(values map[string]interface{}) bool {
 	return true
 }
 
+// public.movie fields
 var (
 	movieTable            = "public.movie"
 	movieIDField          = "public.movie.id"
@@ -66,10 +70,25 @@ var (
 	movieRatingField      = "public.movie.rating"
 )
 
+// public.actor_movie fields
 var (
 	actorMovieTable        = "public.actor_movie"
 	actorMovieActorIDField = "public.actor_movie.id_actor"
 	actorMovieMovieIDField = "public.actor_movie.id_movie"
+)
+
+var userTable = "public.user"
+
+// public.user fields
+var (
+	userIdField      = "public.user.id"
+	userLoginField   = "public.user.login"
+	userHashField    = "public.user.password_hash"
+	userIsAdminField = "public.user.is_admin"
+)
+
+var (
+	allUserSelectFields = []string{userIdField, userLoginField, userHashField, userIsAdminField}
 )
 
 var (

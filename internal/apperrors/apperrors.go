@@ -29,6 +29,7 @@ var (
 	ErrDatabaseUserMissing = errors.New("database user is missing from env")
 	ErrDatabasePWMissing   = errors.New("database password is missing from env")
 	ErrDatabaseNameMissing = errors.New("database name is missing from env")
+	ErrJWTSecretMissing    = errors.New("JWT secret is missing from env")
 )
 
 var (
@@ -60,6 +61,17 @@ var (
 	ErrMovieActorsNotSelected = errors.New("failed to get movie's actors")
 )
 
+var (
+	ErrUserNotSelected = errors.New("failed to select user")
+	ErrWrongPassword   = errors.New("wrong password")
+)
+
+var (
+	ErrCouldNotParseClaims = errors.New("failed to parse JWT claims")
+	ErrTokenExpired        = errors.New("token expired")
+	ErrInvalidIssuedTime   = errors.New("invalid issue timestamp")
+)
+
 type ErrorResponse struct {
 	Code    int
 	Message string
@@ -67,12 +79,17 @@ type ErrorResponse struct {
 
 var BadRequestResponse = ErrorResponse{
 	Code:    http.StatusBadRequest,
-	Message: "Bad request",
+	Message: http.StatusText(http.StatusBadRequest),
 }
 
 var InternalServerErrorResponse = ErrorResponse{
 	Code:    http.StatusInternalServerError,
-	Message: "Internal error",
+	Message: http.StatusText(http.StatusInternalServerError),
+}
+
+var UnauthorizedResponse = ErrorResponse{
+	Code:    http.StatusUnauthorized,
+	Message: http.StatusText(http.StatusUnauthorized),
 }
 
 func ReturnError(err ErrorResponse, w http.ResponseWriter, r *http.Request) {

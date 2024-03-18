@@ -24,3 +24,7 @@ type IMovieStorage interface {
 	GetMovieActors(context.Context, dto.MovieID) ([]dto.ActorInfo, error)
 	FindByString(context.Context, string) ([]*entities.Movie, error)
 }
+
+type IAuthStorage interface {
+	Auth(context.Context, dto.LoginInfo) (bool, *dto.DBUser, error)
+}

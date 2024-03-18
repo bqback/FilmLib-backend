@@ -20,3 +20,7 @@ logging:
   level_based_report: true
   report_caller: true
   disable_level_truncation: true
+
+jwt:
+  # 1 hour
+  lifetime_seconds: 3600

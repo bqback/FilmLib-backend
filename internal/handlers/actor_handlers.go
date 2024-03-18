@@ -62,27 +62,9 @@ func (ah ActorHandler) CreateActor(w http.ResponseWriter, r *http.Request) {
 	// }
 
 	actor, err := ah.as.Create(rCtx, newActor)
-	if err != nil {
-		logger.Error(err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
+	if closed := respondOnErr(err, actor, "Actor not created", logger, requestID, funcName, w, r); !closed {
+		r.Body.Close()
 	}
-	logger.DebugFmt("Actor created", requestID, funcName, nodeName)
-
-	jsonResponse, err := json.Marshal(actor)
-	if err != nil {
-		logger.Error("Failed to marshal response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-
-	_, err = w.Write(jsonResponse)
-	if err != nil {
-		logger.Error("Failed to return response: " + err.Error())
-		apperrors.ReturnError(apperrors.InternalServerErrorResponse, w, r)
-		return
-	}
-	r.Body.Close()
 }
 
 // @Summary Получить данные об актёре

@@ -26,3 +26,8 @@ type SearchResult struct {
 	Actors []Actor `json:"actors"`
 	Movies []Movie `json:"movies"`
 }
+
+type Role struct {
+	RoleName string
+	IsAdmin  bool
+}
