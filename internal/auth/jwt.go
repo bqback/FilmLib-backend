@@ -6,7 +6,7 @@ import (
 	"filmlib/internal/pkg/dto"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthManager struct {
@@ -18,7 +18,7 @@ type jwtClaim struct {
 	ID      uint64
 	Name    string
 	IsAdmin bool
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func NewManager(config *config.JWTConfig) *AuthManager {
@@ -31,9 +31,9 @@ func (am *AuthManager) GenerateToken(info dto.LoginInfo, user *dto.DBUser) (stri
 		ID:      user.ID,
 		Name:    user.Login,
 		IsAdmin: user.IsAdmin,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expiresAt.Unix(),
-			IssuedAt:  time.Now().Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expiresAt),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -56,10 +56,10 @@ func (am *AuthManager) ValidateToken(token string) error {
 	if !ok {
 		return apperrors.ErrCouldNotParseClaims
 	}
-	if claims.ExpiresAt < time.Now().Local().Unix() {
+	if claims.ExpiresAt.Before(time.Now().Local()) {
 		return apperrors.ErrTokenExpired
 	}
-	if claims.IssuedAt >= time.Now().Local().Unix() {
+	if claims.IssuedAt.After(time.Now().Local()) {
 		return apperrors.ErrInvalidIssuedTime
 	}
 
